@@ -1,8 +1,14 @@
-export function add(a: number, b: number): number {
-  return a + b;
-}
+const proxyHandler = async (req: Request) => {
+  const { pathname } = new URL(req.url);
 
-// Learn more at https://deno.land/manual/examples/module_metadata#concepts
-if (import.meta.main) {
-  console.log("Add 2 + 3 =", add(2, 3));
-}
+  const html = await (await fetch(`https://discord.com${pathname}`)).text();
+
+  if (pathname.startsWith("/assets")) {
+    const { status, body } = await fetch(`https://discord.com${pathname}`);
+    return new Response(body, { status });
+  }
+
+  return new Response(html, { headers: { "Content-Type": "text/html" } });
+};
+
+Deno.serve({ port: 3000 }, proxyHandler);
