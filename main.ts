@@ -18,8 +18,10 @@ const proxyHandler = async (req: Request) => {
   );
 
   if (pathname.startsWith("/assets")) {
-    const { status, body } = await fetch(`https://discord.com${pathname}`);
-    return new Response(body, { status });
+    const { status, body, headers } = await fetch(
+      `https://discord.com${pathname}`,
+    );
+    return new Response(body, { status, headers });
   }
   return new Response(html, { headers: { "Content-Type": "text/html" } });
 };
