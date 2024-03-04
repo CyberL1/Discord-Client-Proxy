@@ -1,21 +1,40 @@
-import Environments from "./environments.json" assert { type: "json" };
-import { Environment, GLOBAL_ENV } from "./types.ts";
+import { existsSync } from "https://deno.land/std@0.218.2/fs/exists.ts";
+import Builds from "./builds/builds.json" with { type: "json" };
+import { Build, Endpoints, ReleaseChannel } from "./types.ts";
+import { getBuild } from "./utils.ts";
 
 const proxyHandler = async (req: Request) => {
   const { pathname } = new URL(req.url);
-  const selected = Deno.args[0] || Environments[0].name;
+  const selected = Deno.args[0] || Builds[0].name;
 
-  let html = await (await fetch(`https://discord.com${pathname}`)).text();
-  const env = Environments.find((e: Environment) =>
-    e.name === selected
-  ) as Environment;
+  const build = Builds.find((b) => b.name === selected) as Build;
 
-  Object.keys(env.GLOBAL_ENV).map((e) =>
-    html = html.replaceAll(
-      new RegExp(`${e}: .[^,\n]*`, "g"),
-      `${e}: '${env.GLOBAL_ENV[e as keyof GLOBAL_ENV]}'`,
-    )
-  );
+  if (!existsSync("./builds/hashes.json")) {
+    Deno.writeTextFileSync("./builds/hashes.json", "{}");
+  }
+
+  const hashes = JSON.parse(Deno.readTextFileSync("./builds/hashes.json"));
+
+  if (!Object.keys(hashes).includes(build.info.version_hash)) {
+    const { html } = await getBuild(
+      ReleaseChannel.STABLE,
+      build.info.version_hash,
+    ) as Build;
+
+    hashes[build.info.version_hash] = html;
+    Deno.writeTextFileSync("./builds/hashes.json", JSON.stringify(hashes));
+  }
+
+  build.html = hashes[build.info.version_hash];
+
+  if (build.endpoints) {
+    Object.keys(build.endpoints).map((e) =>
+      build.html = build.html.replaceAll(
+        new RegExp(`${e}: .[^,\n]*`, "g"),
+        `${e}: '${build.endpoints![e as keyof Endpoints]}'`,
+      )
+    );
+  }
 
   if (pathname.startsWith("/assets")) {
     const { status, body, headers } = await fetch(
@@ -23,7 +42,7 @@ const proxyHandler = async (req: Request) => {
     );
     return new Response(body, { status, headers });
   }
-  return new Response(html, { headers: { "Content-Type": "text/html" } });
+  return new Response(build.html, { headers: { "Content-Type": "text/html" } });
 };
 
 Deno.serve({ port: 3000 }, proxyHandler);
