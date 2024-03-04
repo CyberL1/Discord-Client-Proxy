@@ -20,11 +20,15 @@ export const getBuild = async (
 
     if (!hash) hash = webCommits[0].commit.message.match(hashRegex)?.[1];
 
-    const { content } =
+    const { content: info } =
       await (await fetch(`${ENDPOINTS.RELEASE_CHANNELS}/${channel}/info.json`))
         .json();
 
-    build = { info: JSON.parse(atob(content)), html: content };
+    const { content: html } = await (await fetch(
+      `${ENDPOINTS.RELEASE_CHANNELS}/${channel}/web/scripts/index.html`,
+    )).json();
+
+    build = { info: JSON.parse(atob(info)), html: atob(html) };
   } catch {
     console.error(`Cannot connect to github, getting latest ${channel}`);
 
@@ -43,6 +47,6 @@ export const getBuild = async (
 
     build = { info, html };
   }
-  
+
   return build;
 };
