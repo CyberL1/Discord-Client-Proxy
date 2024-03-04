@@ -1,6 +1,7 @@
 [
   {
     "name": "stable",
+    "channel": "stable",
     "info": {
       "build_number": "271216",
       "version_hash": "dd54cb9e84d73c7d32bf7395ea1b8b11fce4eab7",
@@ -10,6 +11,7 @@
   },
   {
     "name": "ptb",
+    "channel": "ptb",
     "info": {
       "build_number": "271888",
       "version_hash": "50d5577abdfc4198caf1d83194bb3f52a9f7e1a5",
@@ -19,6 +21,7 @@
   },
   {
     "name": "canary",
+    "channel": "canary",
     "info": {
       "build_number": "271888",
       "version_hash": "50d5577abdfc4198caf1d83194bb3f52a9f7e1a5",
@@ -28,7 +31,7 @@
   },
   {
     "name": "staging",
-    "staging": true,
+    "channel": "staging",
     "info": {
       "build_number": "271888",
       "version_hash": "50d5577abdfc4198caf1d83194bb3f52a9f7e1a5",
@@ -38,6 +41,7 @@
   },
   {
     "name": "spacebar",
+    "channel": "canary",
     "info": {
       "build_number": "271888",
       "version_hash": "50d5577abdfc4198caf1d83194bb3f52a9f7e1a5",

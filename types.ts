@@ -2,6 +2,7 @@ export interface Build {
   name: string;
   info: BuildInfo;
   endpoints?: Endpoints;
+  channel: ReleaseChannel;
   html: string;
 }
 

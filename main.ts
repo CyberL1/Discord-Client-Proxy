@@ -9,6 +9,8 @@ const proxyHandler = async (req: Request) => {
 
   const build = Builds.find((b) => b.name === selected) as Build;
 
+  if (!build.channel) build.channel = ReleaseChannel.STABLE;
+
   if (!existsSync("./builds/hashes.json")) {
     Deno.writeTextFileSync("./builds/hashes.json", "{}");
   }
@@ -17,7 +19,7 @@ const proxyHandler = async (req: Request) => {
 
   if (!Object.keys(hashes).includes(build.info.version_hash)) {
     const { html } = await getBuild(
-      ReleaseChannel.STABLE,
+      build.channel,
       build.info.version_hash,
     ) as Build;
 
@@ -26,6 +28,11 @@ const proxyHandler = async (req: Request) => {
   }
 
   build.html = hashes[build.info.version_hash];
+
+  build.html = build.html.replace(
+    /RELEASE_CHANNEL: '(.*)'/,
+    `RELEASE_CHANNEL: '${build.channel}'`,
+  );
 
   if (build.endpoints) {
     Object.keys(build.endpoints).map((e) =>
