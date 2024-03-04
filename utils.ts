@@ -7,6 +7,8 @@ export const getBuild = async (
 ) => {
   let build: { info: BuildInfo; html: string };
 
+  if (channel === ReleaseChannel.STAGING) channel = ReleaseChannel.CANARY;
+
   try {
     const commits =
       await (await fetch(`${ENDPOINTS.RELEASE_CHANNELS_COMMITS}/${channel}`))
