@@ -16,9 +16,7 @@ export const getBuild = async (
 
     const commits = await (await fetch(commitsUrl, headers)).json() as Commit[];
 
-    const hashRegex = /\((.+)\)/;
-
-    if (!hash) hash = commits[0].commit.message.match(hashRegex)?.[1];
+    if (!hash) commitHash = commits[0].sha;
     else {
       const commit = commits.find(({ commit }) =>
         commit.message.includes(`${hash}`)
