@@ -58,7 +58,6 @@
       "INVITE_HOST": "app.spacebar.chat/invite",
       "GUILD_TEMPLATE_HOST": "app.spacebar.chat/template",
       "GIFT_CODE_HOST": "app.spacebar.chat/gift",
-      "RELEASE_CHANNEL": "stable",
       "MARKETING_ENDPOINT": "//discord.com",
       "NETWORKING_ENDPOINT": "//router.discord.com",
       "RTC_LATENCY_ENDPOINT": "//latency.discord.media/rtc",

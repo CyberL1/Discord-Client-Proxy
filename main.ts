@@ -33,11 +33,6 @@ const proxyHandler = async (req: Request) => {
 
   build.html = hashes[build.info.version_hash];
 
-  build.html = build.html.replace(
-    /RELEASE_CHANNEL: '(.*)'/,
-    `RELEASE_CHANNEL: '${build.channel}'`,
-  );
-
   if (build.endpoints) {
     Object.keys(build.endpoints).map((e) =>
       build.html = build.html.replaceAll(
@@ -46,6 +41,11 @@ const proxyHandler = async (req: Request) => {
       )
     );
   }
+
+  build.html = build.html.replace(
+    /RELEASE_CHANNEL: '(.*)'/,
+    `RELEASE_CHANNEL: '${build.channel}'`,
+  );
 
   if (pathname.startsWith("/assets")) {
     const { status, body, headers } = await fetch(
