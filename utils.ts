@@ -1,5 +1,5 @@
 import { DOMAINS, ENDPOINTS } from "./contants.ts";
-import { BuildInfo, Commit, ReleaseChannel } from "./types.ts";
+import { Build, BuildInfo, Commit, ReleaseChannel } from "./types.ts";
 
 export const getBuild = async (
   channel: ReleaseChannel,
@@ -53,5 +53,5 @@ export const getBuild = async (
     build = { info, html };
   }
 
-  return build;
+  return build as Build;
 };

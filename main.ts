@@ -45,7 +45,7 @@ const proxyHandler = async (req: Request) => {
   }
 
   build.html = build.html.replace(
-    /RELEASE_CHANNEL: '(.*)'/,
+    /RELEASE_CHANNEL: .[^,\n]*/,
     `RELEASE_CHANNEL: '${build.channel}'`,
   );
 
