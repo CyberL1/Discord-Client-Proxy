@@ -41,5 +41,6 @@ export enum ReleaseChannel {
 }
 
 export interface Commit {
+  sha: string;
   commit: { message: string };
 }

@@ -23,8 +23,12 @@ const proxyHandler = async (req: Request) => {
       build.info.version_hash,
     ) as Build;
 
-    hashes[build.info.version_hash] = html;
-    Deno.writeTextFileSync("./builds/hashes.json", JSON.stringify(hashes));
+    if (!html.includes(`"${build.info.version_hash}"`)) {
+      console.log("build IDs don't match, not caching");
+    } else {
+      hashes[build.info.version_hash] = html;
+      Deno.writeTextFileSync("./builds/hashes.json", JSON.stringify(hashes));
+    }
   }
 
   build.html = hashes[build.info.version_hash];
