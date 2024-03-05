@@ -19,10 +19,7 @@ const proxyHandler = async (req: Request) => {
   const hashes = JSON.parse(Deno.readTextFileSync("./builds/hashes.json"));
 
   if (!Object.keys(hashes).includes(build.info.version_hash)) {
-    const { html } = await getBuild(
-      build.channel,
-      build.info.version_hash,
-    ) as Build;
+    const { html } = await getBuild(build.channel, build.info.version_hash);
 
     if (!html.includes(`"${build.info.version_hash}"`)) {
       console.log("build IDs don't match, not caching");
