@@ -6,6 +6,7 @@ export const getBuild = async (
   hash?: string,
 ) => {
   let build: { info: BuildInfo; html: string };
+  let commitHash;
 
   if (channel === ReleaseChannel.STAGING) channel = ReleaseChannel.CANARY;
 
@@ -21,13 +22,20 @@ export const getBuild = async (
     const hashRegex = /\((.+)\)/;
 
     if (!hash) hash = webCommits[0].commit.message.match(hashRegex)?.[1];
+    else {
+      const commit = webCommits.find(({ commit }) =>
+        commit.message.includes(`${hash}`)
+      );
 
-    const { content: info } =
-      await (await fetch(`${ENDPOINTS.RELEASE_CHANNELS}/${channel}/info.json`))
-        .json();
+      commitHash = commit?.sha;
+    }
+
+    const { content: info } = await (await fetch(
+      `${ENDPOINTS.RELEASE_CHANNELS}/${channel}/info.json?ref=${commitHash}`,
+    )).json();
 
     const { content: html } = await (await fetch(
-      `${ENDPOINTS.RELEASE_CHANNELS}/${channel}/web/scripts/index.html`,
+      `${ENDPOINTS.RELEASE_CHANNELS}/${channel}/web/scripts/index.html?ref=${commitHash}`,
     )).json();
 
     build = { info: JSON.parse(atob(info)), html: atob(html) };
