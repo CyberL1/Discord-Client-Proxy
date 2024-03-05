@@ -2,6 +2,7 @@ import { existsSync } from "https://deno.land/std@0.218.2/fs/exists.ts";
 import Builds from "./builds/builds.json" with { type: "json" };
 import { Build, Endpoints, ReleaseChannel } from "./types.ts";
 import { getBuild } from "./utils.ts";
+import { DOMAINS } from "./contants.ts";
 
 const proxyHandler = async (req: Request) => {
   const { pathname } = new URL(req.url);
@@ -50,7 +51,7 @@ const proxyHandler = async (req: Request) => {
 
   if (pathname.startsWith("/assets")) {
     const { status, body, headers } = await fetch(
-      `https://discord.com${pathname}`,
+      `${DOMAINS[build.channel]}${pathname}`,
     );
     return new Response(body, { status, headers });
   }
