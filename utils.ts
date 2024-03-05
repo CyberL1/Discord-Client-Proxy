@@ -11,19 +11,16 @@ export const getBuild = async (
   if (channel === ReleaseChannel.STAGING) channel = ReleaseChannel.CANARY;
 
   try {
-    const commits =
-      await (await fetch(`${ENDPOINTS.RELEASE_CHANNELS_COMMITS}/${channel}`))
-        .json() as Commit[];
+    const headers = { headers: { "accept": "application/vnd.github+json" } };
+    const commitsUrl = `${ENDPOINTS.RELEASE_CHANNELS_COMMITS}/${channel}/web`;
 
-    const webCommits = commits.filter(({ commit }) =>
-      commit.message.includes("Web")
-    );
+    const commits = await (await fetch(commitsUrl, headers)).json() as Commit[];
 
     const hashRegex = /\((.+)\)/;
 
-    if (!hash) hash = webCommits[0].commit.message.match(hashRegex)?.[1];
+    if (!hash) hash = commits[0].commit.message.match(hashRegex)?.[1];
     else {
-      const commit = webCommits.find(({ commit }) =>
+      const commit = commits.find(({ commit }) =>
         commit.message.includes(`${hash}`)
       );
 
