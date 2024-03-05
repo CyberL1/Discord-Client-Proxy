@@ -6,7 +6,7 @@ export const DOMAINS = {
   [ReleaseChannel.STABLE]: "https://discord.com",
   [ReleaseChannel.PTB]: "https://ptb.discord.com",
   [ReleaseChannel.CANARY]: "https://canary.discord.com",
-  [ReleaseChannel.STAGING]: "https://staging.discord.co",
+  [ReleaseChannel.STAGING]: "https://canary.discord.com", // We cannot access staging without authorization. Original domain: https://staging.discord.co
 };
 
 export const ENDPOINTS = {
