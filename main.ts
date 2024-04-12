@@ -30,6 +30,11 @@ const proxyHandler = async (req: Request) => {
     }
   }
 
+  if (pathname.startsWith("/developers")) {
+    build.html = await (await fetch(`${DOMAINS[build.channel]}${pathname}`))
+      .text();
+  }
+
   if (!build.html) build.html = hashes[build.info.version_hash];
 
   if (build.endpoints) {
