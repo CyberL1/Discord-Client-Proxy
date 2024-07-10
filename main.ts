@@ -1,6 +1,6 @@
 import { existsSync } from "https://deno.land/std@0.218.2/fs/exists.ts";
 import Builds from "./builds/builds.json" with { type: "json" };
-import { Build, Endpoints, ReleaseChannel } from "./types.ts";
+import { Build, GlobalEnv, ReleaseChannel } from "./types.ts";
 import { getBuild } from "./utils.ts";
 import { DOMAINS } from "./contants.ts";
 
@@ -10,7 +10,17 @@ const proxyHandler = async (req: Request) => {
 
   const build = Builds.find((b) => b.name === selected) as Build;
 
-  if (!build.channel) build.channel = ReleaseChannel.STABLE;
+  if (!build.GLOBAL_ENV) {
+    console.warn("GLOBAL_ENV not detected, loading defaults");
+
+    build.GLOBAL_ENV = {
+      RELEASE_CHANNEL: ReleaseChannel.STABLE,
+    } as GlobalEnv;
+  }
+
+  if (!build.GLOBAL_ENV.RELEASE_CHANNEL) {
+    build.GLOBAL_ENV.RELEASE_CHANNEL = ReleaseChannel.STABLE;
+  }
 
   if (!existsSync("./builds/hashes.json")) {
     Deno.writeTextFileSync("./builds/hashes.json", "{}");
@@ -19,7 +29,10 @@ const proxyHandler = async (req: Request) => {
   const hashes = JSON.parse(Deno.readTextFileSync("./builds/hashes.json"));
 
   if (!Object.keys(hashes).includes(build.info.version_hash)) {
-    const { html } = await getBuild(build.channel, build.info.version_hash);
+    const { html } = await getBuild(
+      build.GLOBAL_ENV.RELEASE_CHANNEL,
+      build.info.version_hash,
+    );
 
     if (!html.includes(`"${build.info.version_hash}"`)) {
       console.log("build IDs don't match, not caching");
@@ -31,29 +44,25 @@ const proxyHandler = async (req: Request) => {
   }
 
   if (pathname.startsWith("/developers")) {
-    build.html = await (await fetch(`${DOMAINS[build.channel]}${pathname}`))
-      .text();
+    build.html = await (await fetch(
+      `${DOMAINS[build.GLOBAL_ENV.RELEASE_CHANNEL]}${pathname}`,
+    )).text();
   }
 
   if (!build.html) build.html = hashes[build.info.version_hash];
 
-  if (build.endpoints) {
-    Object.keys(build.endpoints).map((e) =>
+  if (build.GLOBAL_ENV) {
+    Object.keys(build.GLOBAL_ENV).map((e) =>
       build.html = build.html.replaceAll(
         new RegExp(`${e}: .[^,\n]*`, "g"),
-        `${e}: '${build.endpoints![e as keyof Endpoints]}'`,
+        `${e}: '${build.GLOBAL_ENV![e as keyof GlobalEnv]}'`,
       )
     );
   }
 
-  build.html = build.html.replace(
-    /RELEASE_CHANNEL: .[^,\n]*/,
-    `RELEASE_CHANNEL: '${build.channel}'`,
-  );
-
   if (pathname.startsWith("/assets")) {
     const { status, body, headers } = await fetch(
-      `${DOMAINS[build.channel]}${pathname}`,
+      `${DOMAINS[build.GLOBAL_ENV.RELEASE_CHANNEL]}${pathname}`,
     );
     return new Response(body, { status, headers });
   }

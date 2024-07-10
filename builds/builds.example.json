@@ -1,7 +1,6 @@
 [
   {
     "name": "stable",
-    "channel": "stable",
     "info": {
       "build_number": "271216",
       "version_hash": "dd54cb9e84d73c7d32bf7395ea1b8b11fce4eab7",
@@ -11,58 +10,61 @@
   },
   {
     "name": "ptb",
-    "channel": "ptb",
     "info": {
       "build_number": "271888",
       "version_hash": "50d5577abdfc4198caf1d83194bb3f52a9f7e1a5",
       "host_version": "1.0.1058",
       "built_at": 1709577391606
+    },
+    "GLOBAL_ENV": {
+      "RELEASE_CHANNEL": "ptb"
     }
   },
   {
     "name": "canary",
-    "channel": "canary",
-    "info": {
-      "build_number": "271888",
-      "version_hash": "50d5577abdfc4198caf1d83194bb3f52a9f7e1a5",
-      "host_version": "1.0.184",
-      "built_at": 1709577391606
-    }
-  },
-  {
-    "name": "staging",
-    "channel": "staging",
-    "info": {
-      "build_number": "271888",
-      "version_hash": "50d5577abdfc4198caf1d83194bb3f52a9f7e1a5",
-      "host_version": "1.0.184",
-      "built_at": 1709577391606
-    }
-  },
-  {
-    "name": "spacebar",
-    "channel": "canary",
     "info": {
       "build_number": "271888",
       "version_hash": "50d5577abdfc4198caf1d83194bb3f52a9f7e1a5",
       "host_version": "1.0.184",
       "built_at": 1709577391606
     },
-    "endpoints": {
+    "GLOBAL_ENV": {
+      "RELEASE_CHANNEL": "canary"
+    }
+  },
+  {
+    "name": "staging",
+    "info": {
+      "build_number": "271888",
+      "version_hash": "50d5577abdfc4198caf1d83194bb3f52a9f7e1a5",
+      "host_version": "1.0.184",
+      "built_at": 1709577391606
+    },
+    "GLOBAL_ENV": {
+      "RELEASE_CHANNEL": "staging"
+    }
+  },
+  {
+    "name": "spacebar",
+    "info": {
+      "build_number": "271888",
+      "version_hash": "50d5577abdfc4198caf1d83194bb3f52a9f7e1a5",
+      "host_version": "1.0.184",
+      "built_at": 1709577391606
+    },
+    "GLOBAL_ENV": {
       "API_ENDPOINT": "//old.server.spacebar.chat/api",
       "API_VERSION": 9,
       "GATEWAY_ENDPOINT": "wss://gateway.old.server.spacebar.chat",
+      "WEBAPP_ENDPOINT": "//app.spacebar.chat",
       "CDN_HOST": "cdn.old.server.spacebar.chat",
       "MEDIA_PROXY_ENDPOINT": "cdn.old.server.spacebar.chat",
       "WIDGET_ENDPOINT": "//app.spacebar.chat/widget",
       "INVITE_HOST": "app.spacebar.chat/invite",
       "GUILD_TEMPLATE_HOST": "app.spacebar.chat/template",
       "GIFT_CODE_HOST": "app.spacebar.chat/gift",
-      "MARKETING_ENDPOINT": "//discord.com",
-      "NETWORKING_ENDPOINT": "//router.discord.com",
-      "RTC_LATENCY_ENDPOINT": "//latency.discord.media/rtc",
-      "ACTIVITY_APPLICATION_HOST": "discordsays.com",
-      "REMOTE_AUTH_ENDPOINT": "//remote-auth-gateway.discord.gg"
+      "RELEASE_CHANNEL": "canary",
+      "MARKETING_ENDPOINT": "//discord.com"
     }
   }
 ]
