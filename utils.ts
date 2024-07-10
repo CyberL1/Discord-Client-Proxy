@@ -1,11 +1,11 @@
 import { DOMAINS, ENDPOINTS } from "./contants.ts";
-import { Build, BuildInfo, Commit, ReleaseChannel } from "./types.ts";
+import { Build, Commit, ReleaseChannel } from "./types.ts";
 
 export const getBuild = async (
   channel: ReleaseChannel,
   hash?: string,
 ) => {
-  let build: { info: BuildInfo; html: string };
+  let build: { version_hash: string; html: string };
   let commitHash;
 
   if (channel === ReleaseChannel.STAGING) channel = ReleaseChannel.CANARY;
@@ -33,7 +33,10 @@ export const getBuild = async (
       `${ENDPOINTS.RELEASE_CHANNELS}/${channel}/web/scripts/index.html?ref=${commitHash}`,
     )).json();
 
-    build = { info: JSON.parse(atob(info)), html: atob(html) };
+    build = {
+      version_hash: JSON.parse(atob(info)).version_hash,
+      html: atob(html),
+    };
   } catch {
     console.error(`Cannot connect to github, getting latest ${channel}`);
 
@@ -43,14 +46,7 @@ export const getBuild = async (
       await (await fetch(`${DOMAINS[channel]}/assets/version.${channel}.json`))
         .json();
 
-    const info = {
-      build_number: `latest (${DOMAINS[channel]})`,
-      version_hash: hash,
-      host_version: `latest (${DOMAINS[channel]})`,
-      built_at: new Date().getTime(),
-    };
-
-    build = { info, html };
+    build = { version_hash: hash, html };
   }
 
   return build as Build;

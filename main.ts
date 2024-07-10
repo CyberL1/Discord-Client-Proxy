@@ -28,17 +28,17 @@ const proxyHandler = async (req: Request) => {
 
   const hashes = JSON.parse(Deno.readTextFileSync("./builds/hashes.json"));
 
-  if (!Object.keys(hashes).includes(build.info.version_hash)) {
+  if (!Object.keys(hashes).includes(build.version_hash)) {
     const { html } = await getBuild(
       build.GLOBAL_ENV.RELEASE_CHANNEL,
-      build.info.version_hash,
+      build.version_hash,
     );
 
-    if (!html.includes(`"${build.info.version_hash}"`)) {
+    if (!html.includes(`"${build.version_hash}"`)) {
       console.log("build IDs don't match, not caching");
       build.html = html;
     } else {
-      hashes[build.info.version_hash] = html;
+      hashes[build.version_hash] = html;
       Deno.writeTextFileSync("./builds/hashes.json", JSON.stringify(hashes));
     }
   }
@@ -49,7 +49,7 @@ const proxyHandler = async (req: Request) => {
     )).text();
   }
 
-  if (!build.html) build.html = hashes[build.info.version_hash];
+  if (!build.html) build.html = hashes[build.version_hash];
 
   if (build.GLOBAL_ENV) {
     Object.keys(build.GLOBAL_ENV).map((e) =>

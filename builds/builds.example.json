@@ -1,57 +1,29 @@
 [
   {
     "name": "stable",
-    "info": {
-      "build_number": "271216",
-      "version_hash": "dd54cb9e84d73c7d32bf7395ea1b8b11fce4eab7",
-      "host_version": "1.0.9034",
-      "built_at": 1709247709252
-    }
+    "version_hash": "dd54cb9e84d73c7d32bf7395ea1b8b11fce4eab7"
   },
   {
     "name": "ptb",
-    "info": {
-      "build_number": "271888",
-      "version_hash": "50d5577abdfc4198caf1d83194bb3f52a9f7e1a5",
-      "host_version": "1.0.1058",
-      "built_at": 1709577391606
-    },
-    "GLOBAL_ENV": {
-      "RELEASE_CHANNEL": "ptb"
-    }
+    "version_hash": "50d5577abdfc4198caf1d83194bb3f52a9f7e1a5"
   },
   {
     "name": "canary",
-    "info": {
-      "build_number": "271888",
-      "version_hash": "50d5577abdfc4198caf1d83194bb3f52a9f7e1a5",
-      "host_version": "1.0.184",
-      "built_at": 1709577391606
-    },
+    "version_hash": "50d5577abdfc4198caf1d83194bb3f52a9f7e1a5",
     "GLOBAL_ENV": {
       "RELEASE_CHANNEL": "canary"
     }
   },
   {
     "name": "staging",
-    "info": {
-      "build_number": "271888",
-      "version_hash": "50d5577abdfc4198caf1d83194bb3f52a9f7e1a5",
-      "host_version": "1.0.184",
-      "built_at": 1709577391606
-    },
+    "version_hash": "50d5577abdfc4198caf1d83194bb3f52a9f7e1a5",
     "GLOBAL_ENV": {
       "RELEASE_CHANNEL": "staging"
     }
   },
   {
     "name": "spacebar",
-    "info": {
-      "build_number": "271888",
-      "version_hash": "50d5577abdfc4198caf1d83194bb3f52a9f7e1a5",
-      "host_version": "1.0.184",
-      "built_at": 1709577391606
-    },
+    "version_hash": "50d5577abdfc4198caf1d83194bb3f52a9f7e1a5",
     "GLOBAL_ENV": {
       "API_ENDPOINT": "//old.server.spacebar.chat/api",
       "API_VERSION": 9,

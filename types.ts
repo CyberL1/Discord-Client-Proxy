@@ -1,15 +1,8 @@
 export interface Build {
   name: string;
-  info: BuildInfo;
+  version_hash: string;
   GLOBAL_ENV?: GlobalEnv;
   html: string;
-}
-
-export interface BuildInfo {
-  build_number: string;
-  version_hash: string;
-  host_version: string;
-  built_at: number;
 }
 
 export interface GlobalEnv {
