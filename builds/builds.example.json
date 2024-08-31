@@ -5,7 +5,10 @@
   },
   {
     "name": "ptb",
-    "version_hash": "50d5577abdfc4198caf1d83194bb3f52a9f7e1a5"
+    "version_hash": "50d5577abdfc4198caf1d83194bb3f52a9f7e1a5",
+    "GLOBAL_ENV": {
+      "RELEASE_CHANNEL": "ptb"
+    }
   },
   {
     "name": "canary",
