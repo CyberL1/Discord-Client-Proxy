@@ -1,0 +1,28 @@
+[
+  {
+    "name": "discord-stable",
+    "releaseChannel": "stable"
+  },
+  {
+    "name": "discord-ptb",
+    "releaseChannel": "ptb"
+  },
+  {
+    "name": "discord-canary",
+    "releaseChannel": "stable"
+  },
+  {
+    "name": "discord-staging",
+    "releaseChannel": "staging"
+  },
+  {
+    "name": "spacebar",
+    "releaseChannel": "staging",
+    "domains": {
+      "api": "//old.server.spacebar.chat/api",
+      "gateway": "wss://gateway.old.server.spacebar.chat",
+      "cdn": "cdn.old.server.spacebar.chat",
+      "media": "cdn.old.server.spacebar.chat"
+    }
+  }
+]
