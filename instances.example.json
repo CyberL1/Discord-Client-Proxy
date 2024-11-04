@@ -9,7 +9,7 @@
   },
   {
     "name": "discord-canary",
-    "releaseChannel": "stable"
+    "releaseChannel": "canary"
   },
   {
     "name": "discord-staging",

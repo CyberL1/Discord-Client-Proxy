@@ -53,6 +53,13 @@ router.get("/*", async (req, res) => {
     }
   }
 
+  if (instance.releaseChannel === "staging") {
+    content = content.replace(
+      "RELEASE_CHANNEL: 'canary'",
+      "RELEASE_CHANNEL: 'staging'",
+    );
+  }
+
   res.send(content);
 });
 
