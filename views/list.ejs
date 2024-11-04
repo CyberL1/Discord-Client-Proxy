@@ -1,0 +1,5 @@
+Instances<br>
+
+<% instances.map(instance => { %>
+  <a href="<%= instance.name.toLowerCase() %>.<%= host %>/app"><%= instance.name %></a><br>
+<% }) %>

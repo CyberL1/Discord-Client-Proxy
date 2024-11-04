@@ -1,0 +1,21 @@
+{
+  "name": "discord-client-proxy",
+  "version": "1.0.0",
+  "description": "This is a simple thing that proxies the discord client replacing the `GLOBAL_ENV` to the one defined in the `builds/builds.json` file",
+  "main": "index.js",
+  "scripts": {
+    "start": "node --experimental-strip-types index.ts",
+    "dev": "node --watch --experimental-strip-types index.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^4.21.1"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@types/express": "^5.0.0"
+  }
+}
