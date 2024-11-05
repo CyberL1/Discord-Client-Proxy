@@ -1,10 +1,10 @@
 export interface Instance {
   name: string;
   releaseChannel: ReleaseChannel;
-  domains?: InstanceDomains;
+  endpoints?: InstanceEndpoints;
 }
 
-interface InstanceDomains {
+interface InstanceEndpoints {
   api: string;
   gateway: string;
   cdn: string;

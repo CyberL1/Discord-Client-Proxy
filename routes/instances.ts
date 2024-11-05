@@ -36,10 +36,10 @@ router.post("/add", (req, res) => {
     return;
   }
 
-  if (instance.domains) {
-    for (const [key, value] of Object.entries(instance.domains)) {
+  if (instance.endpoints) {
+    for (const [key, value] of Object.entries(instance.endpoints)) {
       if (!value.trim()) {
-        delete instance.domains[key];
+        delete instance.endpoints[key];
       }
     }
   }
