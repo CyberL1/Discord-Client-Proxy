@@ -65,6 +65,8 @@ router.get("/*", async (req, res) => {
     `WEBAPP_ENDPOINT: '//${host}'`,
   );
 
+  content = content.replaceAll(/integrity="[^"]+"/g, "");
+
   res.send(content);
 });
 
