@@ -20,8 +20,8 @@ Add instance
       <% }) %>
   </select><br>
   <% ["api", "gateway", "cdn", "media"].map(key => { %>
-    <label for="domains[<%= key %>]"><%= key.toUpperCase() %> domain</label>
-    <input name="domains[<%= key %>]"><br>
+    <label for="endpoints[<%= key %>]"><%= key.toUpperCase() %> endpoint</label>
+    <input name="endpoints[<%= key %>]"><br>
     <% }) %>
     <button type="submit">Add instance</button>
 </form>
@@ -33,17 +33,17 @@ Add instance
     const formData = new FormData(e.target);
     const data = Object.fromEntries(formData.entries());
 
-    data.domains = {};
+    data.endpoints = {};
 
-    data.domains.api = data["domains[api]"]
-    data.domains.gateway = data["domains[gateway]"]
-    data.domains.cdn = data["domains[cdn]"]
-    data.domains.media = data["domains[media]"];
+    data.endpoints.api = data["endpoints[api]"]
+    data.endpoints.gateway = data["endpoints[gateway]"]
+    data.endpoints.cdn = data["endpoints[cdn]"]
+    data.endpoints.media = data["endpoints[media]"];
 
-    delete data["domains[api]"];
-    delete data["domains[gateway]"];
-    delete data["domains[cdn]"];
-    delete data["domains[media]"];
+    delete data["endpoints[api]"];
+    delete data["endpoints[gateway]"];
+    delete data["endpoints[cdn]"];
+    delete data["endpoints[media]"];
 
     const added = await fetch("/instances/add", { method: "POST", headers: { "content-type":"application/json" }, body: JSON.stringify(data) });
 

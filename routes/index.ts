@@ -24,31 +24,31 @@ router.get("/*", async (req, res) => {
   const page = await fetch(`${Domains[instance.releaseChannel]}/${req.path}`);
   let content = await page.text();
 
-  if (instance.domains) {
-    if (instance.domains.api) {
+  if (instance.endpoints) {
+    if (instance.endpoints.api) {
       content = content.replace(
         "API_ENDPOINT: '//canary.discord.com/api'",
-        `API_ENDPOINT: '${instance.domains.api}'`,
+        `API_ENDPOINT: '${instance.endpoints.api}'`,
       );
     }
 
-    if (instance.domains.gateway) {
+    if (instance.endpoints.gateway) {
       content = content.replace(
         "GATEWAY_ENDPOINT: 'wss://gateway.discord.gg'",
-        `GATEWAY_ENDPOINT: '${instance.domains.gateway}'`,
+        `GATEWAY_ENDPOINT: '${instance.endpoints.gateway}'`,
       );
     }
-    if (instance.domains.cdn) {
+    if (instance.endpoints.cdn) {
       content = content.replace(
         "CDN_HOST: 'cdn.discordapp.com'",
-        `CDN_HOST: '${instance.domains.cdn}'`,
+        `CDN_HOST: '${instance.endpoints.cdn}'`,
       );
     }
 
-    if (instance.domains.media) {
+    if (instance.endpoints.media) {
       content = content.replace(
         "MEDIA_PROXY_ENDPOINT: '//media.discordapp.net'",
-        `MEDIA_PROXY_ENDPOINT: '${instance.domains.media}'`,
+        `MEDIA_PROXY_ENDPOINT: '${instance.endpoints.media}'`,
       );
     }
   }
