@@ -4,6 +4,7 @@ import { readdirSync } from "fs";
 const app = express();
 
 app.set("view engine", "ejs");
+app.use(express.json());
 
 process.env.PORT ??= "3000";
 

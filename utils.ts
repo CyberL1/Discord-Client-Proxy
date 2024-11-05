@@ -21,3 +21,24 @@ export const getInstance = (name: string): Instance | undefined => {
 
   return instances.find((instance) => instance.name === name);
 };
+
+export const addInstance = (data: Instance): void => {
+  const instances = getInstances();
+  instances.push(data);
+
+  writeFileSync("instances.json", JSON.stringify(instances));
+};
+
+export const deleteInstance = (name: string): boolean => {
+  const instances = getInstances();
+  const instanceByName = instances.find((instance) => instance.name === name);
+
+  if (!instanceByName) {
+    return false;
+  }
+
+  instances.splice(instances.indexOf(instanceByName), 1);
+  writeFileSync("instances.json", JSON.stringify(instances));
+
+  return true;
+};
