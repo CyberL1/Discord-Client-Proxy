@@ -26,6 +26,15 @@ router.get("/*", async (req, res) => {
           '"http:"+window.GLOBAL_ENV.API_ENDPOINT',
         ),
     );
+
+    content = Buffer.from(
+      content
+        .toString()
+        .replace(
+          'PRIMARY_DOMAIN="discord.com"',
+          `PRIMARY_DOMAIN="${req.get("host")}"`,
+        ),
+    );
   }
 
   res.type(extension);
