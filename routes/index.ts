@@ -60,6 +60,11 @@ router.get("/*", async (req, res) => {
     );
   }
 
+  content = content.replace(
+    /WEBAPP_ENDPOINT: '\/\/((ptb|canary).)?discord.com\'/,
+    `WEBAPP_ENDPOINT: '//${host}'`,
+  );
+
   res.send(content);
 });
 
