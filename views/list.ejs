@@ -1,5 +1,81 @@
-Instances<br>
+<div class="instances">
+  Instances<br>
 
-<% instances.map(instance => { %>
-  <a href="<%= instance.name.toLowerCase() %>.<%= host %>/app"><%= instance.name %></a><br>
-<% }) %>
+  <% instances.map(instance => { %>
+    <div id="<%= instance.name %>">
+      <a href="http://<%= instance.name.toLowerCase() %>.<%= host %>/app"><%= instance.name %></a>
+      <button onclick="deleteInstance('<%= instance.name %>')">Delete</button>
+    </div>
+  <% }) %>
+</div><br>
+
+Add instance
+<form id="add">
+  <label for="name">Instance name</label>
+  <input name="name" required><br>
+  <label for="releaseChannel">Release channel</label>
+  <select name="releaseChannel" required>
+    <% ["Stable", "PTB", "Canary", "Staging"].map(key => { %>
+      <option value="<%= key.toLowerCase() %>"><%= key %></option>
+      <% }) %>
+  </select><br>
+  <% ["api", "gateway", "cdn", "media"].map(key => { %>
+    <label for="domains[<%= key %>]"><%= key.toUpperCase() %> domain</label>
+    <input name="domains[<%= key %>]"><br>
+    <% }) %>
+    <button type="submit">Add instance</button>
+</form>
+
+<script>
+  document.querySelector("form#add").addEventListener("submit", async e => {
+    e.preventDefault();
+
+    const formData = new FormData(e.target);
+    const data = Object.fromEntries(formData.entries());
+
+    data.domains = {};
+
+    data.domains.api = data["domains[api]"]
+    data.domains.gateway = data["domains[gateway]"]
+    data.domains.cdn = data["domains[cdn]"]
+    data.domains.media = data["domains[media]"];
+
+    delete data["domains[api]"];
+    delete data["domains[gateway]"];
+    delete data["domains[cdn]"];
+    delete data["domains[media]"];
+
+    const added = await fetch("/instances/add", { method: "POST", headers: { "content-type":"application/json" }, body: JSON.stringify(data) });
+
+    if (added.ok) {
+      const div = document.createElement("div");
+      div.id = data.name;
+
+      const link = document.createElement("a");
+
+      link.href = `http://${data.name}.${location.host}/app`;
+      link.innerText = data.name;
+
+      div.append(link);
+
+      const deleteButton = document.createElement("button");
+
+      deleteButton.innerText = "Delete";
+      deleteButton.onclick = () => deleteInstance(data.name);
+
+      div.append(deleteButton);
+
+      document.querySelector("div.instances").append(div);
+    }
+  });
+
+  async function deleteInstance(name) {
+    if (confirm(`Are you sure you want to delete ${name}?`)) {
+      const deleted = await fetch(`/instances/${name}`, { method: "DELETE" });
+
+      if (deleted.ok) {
+        document.querySelector(`div#${name}`).remove();
+      }
+    }
+  }
+</script>
