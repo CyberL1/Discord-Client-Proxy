@@ -27,7 +27,7 @@ router.get("/*", async (req, res) => {
   if (instance.endpoints) {
     if (instance.endpoints.api) {
       content = content.replace(
-        "API_ENDPOINT: '//canary.discord.com/api'",
+        /API_ENDPOINT: '\/\/((ptb|canary).)?discord.com\/api'/,
         `API_ENDPOINT: '${instance.endpoints.api}'`,
       );
     }
