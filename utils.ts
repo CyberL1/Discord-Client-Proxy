@@ -29,6 +29,21 @@ export const addInstance = (data: Instance): void => {
   writeFileSync("instances.json", JSON.stringify(instances));
 };
 
+export const editInstance = (name: string, data: Instance): boolean => {
+  const instances = getInstances();
+
+  const instance = instances.find((instance) => instance.name === name);
+
+  if (!instance) {
+    return false;
+  }
+
+  instances[instances.indexOf(instance)] = data;
+  writeFileSync("instances.json", JSON.stringify(instances));
+
+  return true;
+};
+
 export const deleteInstance = (name: string): boolean => {
   const instances = getInstances();
   const instanceByName = instances.find((instance) => instance.name === name);

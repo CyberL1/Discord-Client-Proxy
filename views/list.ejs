@@ -4,7 +4,7 @@
   <% instances.map(instance => { %>
     <div id="<%= instance.name %>">
       <a href="http://<%= instance.name.toLowerCase() %>.<%= host %>/app"><%= instance.name %></a>
-      <button onclick="deleteInstance('<%= instance.name %>')">Delete</button>
+      <button onclick="location.href = '/edit/<%= instance.name %>'">Edit</button>
     </div>
   <% }) %>
 </div><br>
@@ -60,22 +60,12 @@ Add instance
 
       const deleteButton = document.createElement("button");
 
-      deleteButton.innerText = "Delete";
-      deleteButton.onclick = () => deleteInstance(data.name);
+      deleteButton.innerText = "Edit";
+      deleteButton.onclick = () => location.href = `/edit/${data.name}`;
 
       div.append(deleteButton);
 
       document.querySelector("div.instances").append(div);
     }
   });
-
-  async function deleteInstance(name) {
-    if (confirm(`Are you sure you want to delete ${name}?`)) {
-      const deleted = await fetch(`/instances/${name}`, { method: "DELETE" });
-
-      if (deleted.ok) {
-        document.querySelector(`div#${name}`).remove();
-      }
-    }
-  }
 </script>
