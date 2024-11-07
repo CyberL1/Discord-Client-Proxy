@@ -76,10 +76,10 @@ router.post("/edit/:name", (req, res) => {
     return;
   }
 
-  if (instance.endpoints) {
-    for (const [key, value] of Object.entries(instance.endpoints)) {
+  if (data.endpoints) {
+    for (const [key, value] of Object.entries(data.endpoints)) {
       if (!value.trim()) {
-        delete instance.endpoints[key];
+        delete data.endpoints[key];
       }
     }
   }
