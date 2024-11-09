@@ -12,7 +12,7 @@ const router = Router();
 
 router.post("/add", (req, res) => {
   const instance = req.body as Instance;
-  instance.name = instance.name.trim();
+  instance.name = instance.name.trim().replaceAll(" ", "-");
 
   if (!instance.name) {
     res.status(400).send({
