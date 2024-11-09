@@ -1,14 +1,14 @@
 export interface Instance {
   name: string;
   releaseChannel: ReleaseChannel;
-  endpoints?: InstanceEndpoints;
+  endpoints: InstanceEndpoints;
 }
 
 interface InstanceEndpoints {
-  api: string;
-  gateway: string;
-  cdn: string;
-  media: string;
+  api?: string;
+  gateway?: string;
+  cdn?: string;
+  media?: string;
 }
 
 export type ReleaseChannel = "stable" | "ptb" | "canary" | "staging";

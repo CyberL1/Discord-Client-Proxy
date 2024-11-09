@@ -25,19 +25,13 @@ router.get("/*", async (req, res) => {
   let content = await page.text();
 
   if (instance.endpoints) {
-    if (instance.endpoints.api) {
-      content = content.replace(
-        /API_ENDPOINT: '\/\/((ptb|canary).)?discord.com\/api'/,
-        `API_ENDPOINT: '${instance.endpoints.api}'`,
-      );
-    }
-
     if (instance.endpoints.gateway) {
       content = content.replace(
         "GATEWAY_ENDPOINT: 'wss://gateway.discord.gg'",
         `GATEWAY_ENDPOINT: '${instance.endpoints.gateway}'`,
       );
     }
+
     if (instance.endpoints.cdn) {
       content = content.replace(
         "CDN_HOST: 'cdn.discordapp.com'",
@@ -59,6 +53,11 @@ router.get("/*", async (req, res) => {
       "RELEASE_CHANNEL: 'staging'",
     );
   }
+
+  content = content.replace(
+    /API_ENDPOINT: '\/\/((ptb|canary).)?discord.com\/api'/,
+    `API_ENDPOINT: '/api'`,
+  );
 
   content = content.replace(
     /WEBAPP_ENDPOINT: '\/\/((ptb|canary).)?discord.com\'/,
