@@ -24,27 +24,28 @@ router.get("/*", async (req, res) => {
   const page = await fetch(`${Domains[instance.releaseChannel]}/${req.path}`);
   let content = await page.text();
 
-  if (instance.endpoints) {
-    if (instance.endpoints.gateway) {
-      content = content.replace(
-        "GATEWAY_ENDPOINT: 'wss://gateway.discord.gg'",
-        `GATEWAY_ENDPOINT: '${instance.endpoints.gateway}'`,
-      );
-    }
+  content = content.replace(
+    /API_ENDPOINT: '\/\/((ptb|canary).)?discord.com\/api'/,
+    `API_ENDPOINT: '/api'`,
+  );
 
-    if (instance.endpoints.cdn) {
-      content = content.replace(
-        "CDN_HOST: 'cdn.discordapp.com'",
-        `CDN_HOST: '${instance.endpoints.cdn}'`,
-      );
-    }
+  if (instance.endpoints.gateway) {
+    content = content.replace(
+      "GATEWAY_ENDPOINT: 'wss://gateway.discord.gg'",
+      `GATEWAY_ENDPOINT: '${instance.endpoints.gateway}'`,
+    );
+  }
 
-    if (instance.endpoints.media) {
-      content = content.replace(
-        "MEDIA_PROXY_ENDPOINT: '//media.discordapp.net'",
-        `MEDIA_PROXY_ENDPOINT: '${instance.endpoints.media}'`,
-      );
-    }
+  content = content.replace(
+    "CDN_HOST: 'cdn.discordapp.com'",
+    `CDN_HOST: '${host}/cdn'`,
+  );
+
+  if (instance.endpoints.media) {
+    content = content.replace(
+      "MEDIA_PROXY_ENDPOINT: '//media.discordapp.net'",
+      `MEDIA_PROXY_ENDPOINT: '${instance.endpoints.media}'`,
+    );
   }
 
   if (instance.releaseChannel === "staging") {
@@ -53,11 +54,6 @@ router.get("/*", async (req, res) => {
       "RELEASE_CHANNEL: 'staging'",
     );
   }
-
-  content = content.replace(
-    /API_ENDPOINT: '\/\/((ptb|canary).)?discord.com\/api'/,
-    `API_ENDPOINT: '/api'`,
-  );
 
   content = content.replace(
     /WEBAPP_ENDPOINT: '\/\/((ptb|canary).)?discord.com\'/,
