@@ -25,7 +25,7 @@ router.all("/*", async (req, res) => {
 
   const responseOptions: RequestInit = {
     method: req.method,
-    headers: req.headers,
+    headers: req.headers as HeadersInit,
   };
 
   if (!["HEAD", "GET"].includes(req.method) && req.body) {
