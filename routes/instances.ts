@@ -62,7 +62,7 @@ router.post("/add", (req, res) => {
 
 router.post("/edit/:name", (req, res) => {
   const data = req.body as Instance;
-  data.name = data.name.trim();
+  data.name = data.name.trim().replaceAll(" ", "-");
 
   const instance = getInstance(req.params.name);
 
