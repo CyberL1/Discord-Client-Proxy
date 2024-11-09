@@ -42,11 +42,17 @@ router.post("/add", (req, res) => {
     return;
   }
 
-  if (instance.endpoints) {
-    for (const [key, value] of Object.entries(instance.endpoints)) {
-      if (!value.trim()) {
-        delete instance.endpoints[key];
-      }
+  if (!instance.endpoints || typeof instance.endpoints != "object") {
+    res.status(400).send({
+      error: "Cannot add instance",
+      reason: "endpoints object missing",
+    });
+    return;
+  }
+
+  for (const [key, value] of Object.entries(instance.endpoints)) {
+    if (!value.trim()) {
+      delete instance.endpoints[key];
     }
   }
 
