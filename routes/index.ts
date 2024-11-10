@@ -29,12 +29,10 @@ router.get("/*", async (req, res) => {
     `API_ENDPOINT: '/api'`,
   );
 
-  if (instance.endpoints.gateway) {
-    content = content.replace(
-      "GATEWAY_ENDPOINT: 'wss://gateway.discord.gg'",
-      `GATEWAY_ENDPOINT: '${instance.endpoints.gateway}'`,
-    );
-  }
+  content = content.replace(
+    "GATEWAY_ENDPOINT: 'wss://gateway.discord.gg'",
+    `GATEWAY_ENDPOINT: 'ws://${host}/gateway'`,
+  );
 
   content = content.replace(
     "CDN_HOST: 'cdn.discordapp.com'",
