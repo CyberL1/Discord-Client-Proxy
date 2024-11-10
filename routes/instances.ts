@@ -57,7 +57,7 @@ router.post("/add", (req, res) => {
   }
 
   addInstance(instance);
-  res.redirect("/");
+  res.send(instance);
 });
 
 router.post("/edit/:name", (req, res) => {
