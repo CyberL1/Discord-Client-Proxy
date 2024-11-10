@@ -35,6 +35,12 @@ router.get("/*", async (req, res) => {
           `PRIMARY_DOMAIN="${req.get("host")}"`,
         ),
     );
+
+    content = Buffer.from(
+      content
+        .toString()
+        .replace("e.resume_gateway_url", `"ws://${req.get("host")}/gateway"`),
+    );
   }
 
   res.type(extension);
