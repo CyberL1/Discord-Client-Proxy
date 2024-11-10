@@ -28,7 +28,11 @@ router.all("/*", async (req, res) => {
     headers: req.headers as HeadersInit,
   };
 
-  if (!["HEAD", "GET"].includes(req.method) && req.body) {
+  if (
+    !["HEAD", "GET"].includes(req.method) &&
+    req.headers["content-type"] === "application/json" &&
+    req.body
+  ) {
     responseOptions.body = JSON.stringify(req.body);
   }
 
