@@ -20,7 +20,7 @@ router.all("/*", async (req, res) => {
     : `${Domains[instance.releaseChannel]}/api`;
 
   if (!instance.endpoints.api) {
-    req.headers.origin = "https://canarydiscord.com";
+    req.headers.origin = "https://discord.com";
   }
 
   const responseOptions: RequestInit = {
