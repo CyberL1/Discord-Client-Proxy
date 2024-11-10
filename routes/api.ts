@@ -20,7 +20,7 @@ router.all("/*", async (req, res) => {
     : `${Domains[instance.releaseChannel]}/api`;
 
   if (!instance.endpoints.api) {
-    req.headers.origin = "https://discord.com";
+    req.headers.origin = "https://canarydiscord.com";
   }
 
   const responseOptions: RequestInit = {
@@ -53,6 +53,7 @@ router.all("/*", async (req, res) => {
     }
   } catch (err) {
     console.log("API Proxy error:", err);
+    res.end();
   }
 });
 
