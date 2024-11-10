@@ -18,6 +18,7 @@ for (const route of routesDir) {
   app.use(routePath, (await import(`./routes/${route}`)).default);
 }
 
-app.listen(process.env.PORT, () => {
+export const server = app.listen(process.env.PORT, () => {
   console.log(`App ready on port ${process.env.PORT}`);
+  import("./gateway/index.ts");
 });
