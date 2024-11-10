@@ -46,22 +46,23 @@ Add instance
     delete data["endpoints[media]"];
 
     const added = await fetch("/instances/add", { method: "POST", headers: { "content-type":"application/json" }, body: JSON.stringify(data) });
+    const json = await added.json();
 
     if (added.ok) {
       const div = document.createElement("div");
-      div.id = data.name.replaceAll(" ", "-");
+      div.id = json.name;
 
       const link = document.createElement("a");
 
-      link.href = `http://${data.name.replaceAll(" ", "-")}.${location.host}/app`;
-      link.innerText = data.name.replaceAll(" ", "-");
+      link.href = `http://${json.name}.${location.host}/app`;
+      link.innerText = json.name;
 
       div.append(link);
 
       const deleteButton = document.createElement("button");
 
       deleteButton.innerText = "Edit";
-      deleteButton.onclick = () => location.href = `/edit/${data.name.replaceAll(" ", "-")}`;
+      deleteButton.onclick = () => location.href = `/edit/${json.name}`;
 
       div.append(deleteButton);
 
