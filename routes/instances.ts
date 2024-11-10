@@ -1,26 +1,42 @@
 import { Router } from "express";
+import Ajv from "ajv";
+import type { JSONSchemaType } from "ajv";
 import {
   addInstance,
   deleteInstance,
-  getInstance,
   editInstance,
   getInstances,
 } from "../utils.ts";
 import type { Instance } from "../types.ts";
 
+const ajv = new Ajv();
 const router = Router();
+
+const isntanceSchema: JSONSchemaType<Instance> = {
+  type: "object",
+  properties: {
+    name: { type: "string", pattern: "^[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]$" },
+    releaseChannel: {
+      type: "string",
+      oneOf: [{ type: "string", pattern: "stable|ptb|canary|staging" }],
+    },
+    endpoints: {
+      type: "object",
+      properties: {
+        api: { type: "string" },
+        gateway: { type: "string" },
+        cdn: { type: "string" },
+        media: { type: "string" },
+      },
+      additionalProperties: false,
+    },
+  },
+  required: ["name", "releaseChannel", "endpoints"],
+  additionalProperties: false,
+};
 
 router.post("/add", (req, res) => {
   const instance = req.body as Instance;
-  instance.name = instance.name.trim().replaceAll(" ", "-");
-
-  if (!instance.name) {
-    res.status(400).send({
-      error: "Cannot add instance",
-      reason: "name cannot be empty",
-    });
-    return;
-  }
 
   const instances = getInstances();
 
@@ -32,20 +48,14 @@ router.post("/add", (req, res) => {
     return;
   }
 
-  if (
-    !["stable", "ptb", "canary", "staging"].includes(instance.releaseChannel)
-  ) {
-    res.status(400).send({
-      error: "Cannot add instance",
-      reason: "releaseChannel must be one of stable, ptb, canary, staging",
-    });
-    return;
-  }
+  const validate = ajv.compile(isntanceSchema);
 
-  if (!instance.endpoints || typeof instance.endpoints != "object") {
-    res.status(400).send({
+  if (!validate(instance)) {
+    const { instancePath, message } = validate.errors![0];
+
+    res.status(500).send({
       error: "Cannot add instance",
-      reason: "endpoints object missing",
+      reason: `${instancePath.replace("/", "")} ${message}`,
     });
     return;
   }
@@ -62,22 +72,14 @@ router.post("/add", (req, res) => {
 
 router.post("/edit/:name", (req, res) => {
   const data = req.body as Instance;
-  data.name = data.name.trim().replaceAll(" ", "-");
+  const validate = ajv.compile(isntanceSchema);
 
-  const instance = getInstance(req.params.name);
+  if (!validate(data)) {
+    const { instancePath, message } = validate.errors![0];
 
-  if (!instance) {
-    res.status(400).send({
+    res.status(500).send({
       error: "Cannot update instance",
-      reason: "Not found",
-    });
-    return;
-  }
-
-  if (!["stable", "ptb", "canary", "staging"].includes(data.releaseChannel)) {
-    res.status(400).send({
-      error: "Cannot update instance",
-      reason: "releaseChannel must be one of stable, ptb, canary, staging",
+      reason: `${instancePath.replace("/", "")} ${message}`,
     });
     return;
   }

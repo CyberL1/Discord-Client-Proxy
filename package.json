@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "ajv": "^8.17.1",
     "ejs": "^3.1.10",
     "express": "^4.21.1"
   },
