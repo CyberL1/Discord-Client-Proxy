@@ -14,7 +14,7 @@ export default (fastify: FastifyInstance) => {
     }
 
     const instanceApiEndpoint = instance.endpoints.api
-      ? `https:${instance.endpoints.api.slice(0, -4)}`
+      ? `${instance.settings.useHttps ? "https" : "http"}:${instance.endpoints.api.slice(0, -4)}`
       : Domains[instance.releaseChannel];
 
     if (!instance.endpoints.api) {
@@ -33,8 +33,6 @@ export default (fastify: FastifyInstance) => {
     ) {
       responseOptions.body = JSON.stringify(req.body);
     }
-
-    console.log(`${instanceApiEndpoint}${req.url}`);
 
     try {
       const response = await fetch(

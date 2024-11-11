@@ -39,7 +39,7 @@ export default (fastify: FastifyInstance) => {
           .toString()
           .replace(
             "e.resume_gateway_url",
-            `"ws://${req.headers.host}/gateway"`,
+            `"${instance.settings.useGatewayProxy ? `ws://${req.headers.host}/gateway` : (instance.endpoints.gateway ?? "wss://gateway.discord.gg")}"`,
           ),
       );
     }

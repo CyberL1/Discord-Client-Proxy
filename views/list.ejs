@@ -22,7 +22,13 @@ Add instance
   <% ["api", "gateway", "cdn", "media"].map(key => { %>
     <label for="endpoints[<%= key %>]"><%= key.toUpperCase() %> endpoint</label>
     <input name="endpoints[<%= key %>]"><br>
-    <% }) %>
+    <% }) %><br>
+
+    Settings<br>
+    <% ["useHttps", "useApiProxy", "useGatewayProxy", "useCdnProxy"].map(key => { %>
+      <input type="checkbox" name="settings[<%= key %>]"><%= key %><br>
+      <% }) %>
+    <br>
     <button type="submit">Add instance</button>
 </form>
 
@@ -33,19 +39,24 @@ Add instance
     const formData = new FormData(e.target);
     const data = Object.fromEntries(formData.entries());
 
-    data.endpoints = {};
+    const instance = {
+      name: data.name,
+      releaseChannel: data.releaseChannel,
+      endpoints: {
+        api: data["endpoints[api]"],
+        gateway: data["endpoints[gateway]"],
+        cdn: data["endpoints[cdn]"],
+        media: data["endpoints[media]"]
+      },
+      settings: {
+        useHttps: data["settings[useHttps]"] === "on",
+        useApiProxy: data["settings[useApiProxy]"] === "on",
+        useGatewayProxy: data["settings[useGatewayProxy]"] === "on",
+        useCdnProxy: data["settings[useCdnProxy]"] === "on"
+      }
+    };
 
-    data.endpoints.api = data["endpoints[api]"]
-    data.endpoints.gateway = data["endpoints[gateway]"]
-    data.endpoints.cdn = data["endpoints[cdn]"]
-    data.endpoints.media = data["endpoints[media]"];
-
-    delete data["endpoints[api]"];
-    delete data["endpoints[gateway]"];
-    delete data["endpoints[cdn]"];
-    delete data["endpoints[media]"];
-
-    const added = await fetch("/instances/add", { method: "POST", headers: { "content-type":"application/json" }, body: JSON.stringify(data) });
+    const added = await fetch("/instances/add", { method: "POST", headers: { "content-type":"application/json" }, body: JSON.stringify(instance) });
     const json = await added.json();
 
     if (added.ok) {

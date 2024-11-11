@@ -39,8 +39,18 @@ export default (fastify: FastifyInstance) => {
           },
           additionalProperties: false,
         },
+        settings: {
+          type: "object",
+          properties: {
+            useHttps: { type: "boolean" },
+            useApiProxy: { type: "boolean" },
+            useGatewayProxy: { type: "boolean" },
+            useCdnProxy: { type: "boolean" },
+          },
+        },
+        additionalProperties: false,
       },
-      required: ["name", "releaseChannel", "endpoints"],
+      required: ["name", "releaseChannel", "endpoints", "settings"],
       additionalProperties: false,
     },
   };

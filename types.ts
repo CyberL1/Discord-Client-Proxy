@@ -2,6 +2,7 @@ export interface Instance {
   name: string;
   releaseChannel: ReleaseChannel;
   endpoints: InstanceEndpoints;
+  settings: InstanceSettings;
 }
 
 interface InstanceEndpoints {
@@ -9,6 +10,13 @@ interface InstanceEndpoints {
   gateway?: string;
   cdn?: string;
   media?: string;
+}
+
+interface InstanceSettings {
+  useHttps?: boolean;
+  useApiProxy?: boolean;
+  useGatewayProxy?: boolean;
+  useCdnProxy?: boolean;
 }
 
 export type ReleaseChannel = "stable" | "ptb" | "canary" | "staging";

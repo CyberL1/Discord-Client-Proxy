@@ -13,7 +13,7 @@ export default (fastify: FastifyInstance) => {
     }
 
     const instanceCdnEndpoint = instance.endpoints.cdn
-      ? `https:${instance.endpoints.cdn}`
+      ? `${instance.settings.useHttps ? "https" : "http"}:${instance.endpoints.cdn}`
       : "https://cdn.discordapp.com";
 
     const responseOptions: RequestInit = {
