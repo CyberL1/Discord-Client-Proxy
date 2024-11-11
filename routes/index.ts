@@ -24,17 +24,17 @@ export default (fastify: FastifyInstance) => {
 
     content = content.replace(
       /API_ENDPOINT: '\/\/((ptb|canary).)?discord.com\/api'/,
-      `API_ENDPOINT: '//${req.headers.host}/api'`,
+      `API_ENDPOINT: '${instance.settings.useApiProxy ? `//${host}/api` : (instance.endpoints.api ?? Domains[instance.releaseChannel].slice(6) + "/api")}'`,
     );
 
     content = content.replace(
       "GATEWAY_ENDPOINT: 'wss://gateway.discord.gg'",
-      `GATEWAY_ENDPOINT: 'ws://${host}/gateway'`,
+      `GATEWAY_ENDPOINT: '${instance.settings.useGatewayProxy ? `ws://${host}/gateway` : (instance.endpoints.gateway ?? "wss://gateway.discord.gg")}'`,
     );
 
     content = content.replace(
       "CDN_HOST: 'cdn.discordapp.com'",
-      `CDN_HOST: '${host}/cdn'`,
+      `CDN_HOST: '${instance.settings.useCdnProxy ? `${host}/cdn` : (instance.endpoints.cdn ?? "cdn.discordapp.com")}'`,
     );
 
     if (instance.endpoints.media) {
