@@ -1,41 +1,38 @@
-import { Router } from "express";
+import type { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
 import { getInstance } from "../utils.ts";
 
-const router = Router();
+export default (fastify: FastifyInstance) => {
+  fastify.all("/*", async (req: FastifyRequest, reply: FastifyReply) => {
+    const instance = getInstance(req.headers.host?.split(".")[0]!);
 
-router.all("/*", async (req, res) => {
-  const instance = getInstance(req.get("host")?.split(".")[0]!);
+    if (!instance) {
+      return reply.status(500).send({
+        error: "Cannot send cdn request",
+        reason: "Instance not found",
+      });
+    }
 
-  if (!instance) {
-    res.status(500).send({
-      error: "Cannot send cdn request",
-      reason: "Instance not found",
-    });
-    return;
-  }
+    const instanceCdnEndpoint = instance.endpoints.cdn
+      ? `https:${instance.endpoints.cdn}`
+      : "https://cdn.discordapp.com";
 
-  const instanceCdnEndpoint = instance.endpoints.cdn
-    ? `https:${instance.endpoints.cdn}`
-    : "https://cdn.discordapp.com";
+    const responseOptions: RequestInit = {
+      method: req.method,
+      headers: req.headers as HeadersInit,
+    };
 
-  const responseOptions: RequestInit = {
-    method: req.method,
-    headers: req.headers as HeadersInit,
-  };
+    try {
+      const response = await fetch(
+        `${instanceCdnEndpoint}${req.url.substring(4)}`,
+        responseOptions,
+      );
 
-  try {
-    const response = await fetch(
-      `${instanceCdnEndpoint}${req.url}`,
-      responseOptions,
-    );
+      const buffer = Buffer.from(await response.arrayBuffer());
 
-    const buffer = Buffer.from(await response.arrayBuffer());
-
-    res.type(response.headers.get("content-type")!);
-    res.status(response.status).send(buffer);
-  } catch (err) {
-    console.log("CDN Proxy error:", err);
-  }
-});
-
-export default router;
+      reply.type(response.headers.get("content-type")!);
+      reply.status(response.status).send(buffer);
+    } catch (err) {
+      console.log("CDN Proxy error:", err);
+    }
+  });
+};

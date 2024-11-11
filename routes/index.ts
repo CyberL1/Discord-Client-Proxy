@@ -1,66 +1,63 @@
-import { Router } from "express";
+import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { getInstances, getInstance } from "../utils.ts";
 import { Domains } from "../types.ts";
 
-const router = Router();
+export default (fastify: FastifyInstance) => {
+  fastify.get("/*", async (req: FastifyRequest, reply: FastifyReply) => {
+    const host = req.headers.host;
 
-router.get("/*", async (req, res) => {
-  const host = req.get("host");
+    if (host === `localhost:${process.env.PORT}`) {
+      const instances = getInstances();
 
-  if (host === `localhost:${process.env.PORT}`) {
-    const instances = getInstances();
+      // @ts-ignore
+      return reply.view("list", { instances, host });
+    }
 
-    res.render("list", { instances, host });
-    return;
-  }
+    const instance = getInstance(host?.split(".")[0] as string);
 
-  const instance = getInstance(host?.split(".")[0] as string);
+    if (!instance) {
+      return "Instance not found";
+    }
 
-  if (!instance) {
-    res.send("Instance not found");
-    return;
-  }
+    const page = await fetch(`${Domains[instance.releaseChannel]}${req.url}`);
+    let content = await page.text();
 
-  const page = await fetch(`${Domains[instance.releaseChannel]}/${req.path}`);
-  let content = await page.text();
-
-  content = content.replace(
-    /API_ENDPOINT: '\/\/((ptb|canary).)?discord.com\/api'/,
-    `API_ENDPOINT: '/api'`,
-  );
-
-  content = content.replace(
-    "GATEWAY_ENDPOINT: 'wss://gateway.discord.gg'",
-    `GATEWAY_ENDPOINT: 'ws://${host}/gateway'`,
-  );
-
-  content = content.replace(
-    "CDN_HOST: 'cdn.discordapp.com'",
-    `CDN_HOST: '${host}/cdn'`,
-  );
-
-  if (instance.endpoints.media) {
     content = content.replace(
-      "MEDIA_PROXY_ENDPOINT: '//media.discordapp.net'",
-      `MEDIA_PROXY_ENDPOINT: '${instance.endpoints.media}'`,
+      /API_ENDPOINT: '\/\/((ptb|canary).)?discord.com\/api'/,
+      `API_ENDPOINT: '//${req.headers.host}/api'`,
     );
-  }
 
-  if (instance.releaseChannel === "staging") {
     content = content.replace(
-      "RELEASE_CHANNEL: 'canary'",
-      "RELEASE_CHANNEL: 'staging'",
+      "GATEWAY_ENDPOINT: 'wss://gateway.discord.gg'",
+      `GATEWAY_ENDPOINT: 'ws://${host}/gateway'`,
     );
-  }
 
-  content = content.replace(
-    /WEBAPP_ENDPOINT: '\/\/((ptb|canary).)?discord.com\'/,
-    `WEBAPP_ENDPOINT: '//${host}'`,
-  );
+    content = content.replace(
+      "CDN_HOST: 'cdn.discordapp.com'",
+      `CDN_HOST: '${host}/cdn'`,
+    );
 
-  content = content.replaceAll(/integrity="[^"]+"/g, "");
+    if (instance.endpoints.media) {
+      content = content.replace(
+        "MEDIA_PROXY_ENDPOINT: '//media.discordapp.net'",
+        `MEDIA_PROXY_ENDPOINT: '${instance.endpoints.media}'`,
+      );
+    }
 
-  res.send(content);
-});
+    if (instance.releaseChannel === "staging") {
+      content = content.replace(
+        "RELEASE_CHANNEL: 'canary'",
+        "RELEASE_CHANNEL: 'staging'",
+      );
+    }
 
-export default router;
+    content = content.replace(
+      /WEBAPP_ENDPOINT: '\/\/((ptb|canary).)?discord.com\'/,
+      `WEBAPP_ENDPOINT: '//${host}'`,
+    );
+
+    content = content.replaceAll(/integrity="[^"]+"/g, "");
+
+    return reply.type("html").send(content);
+  });
+};
