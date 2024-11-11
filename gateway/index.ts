@@ -1,43 +1,40 @@
-import { WebSocketServer } from "ws";
-import { server } from "../index.ts";
+import type { FastifyInstance, FastifyRequest } from "fastify";
+import { WebSocket } from "ws";
 import { getInstance } from "../utils.ts";
 
-const wss = new WebSocketServer({ noServer: true, path: "/gateway" });
+export default (fastify: FastifyInstance) => {
+  fastify.get(
+    "/gateway",
+    { websocket: true },
+    (ws: WebSocket, req: FastifyRequest) => {
+      const instance = getInstance(req.headers.host?.split(".")[0]!);
 
-server.on("upgrade", (req, socket, head) => {
-  wss.handleUpgrade(req, socket, head, (ws) => {
-    const instance = getInstance(req.headers.host?.split(".")[0]!);
+      if (!instance) {
+        ws.close(1008, "Instance not found");
+        return;
+      }
 
-    if (!instance) {
-      ws.close(1008, "Instance not found");
-      return;
-    }
+      const instanceGatewayEndpoint =
+        instance.endpoints.gateway ?? "wss://gateway.discord.gg";
+      const instanceWS = new WebSocket(`${instanceGatewayEndpoint}${req.url}`);
 
-    const instanceGatewayEndpoint =
-      instance.endpoints.gateway ?? "wss://gateway.discord.gg";
-    const instanceWS = new WebSocket(`${instanceGatewayEndpoint}${req.url}`);
+      let dataParsed = null;
 
-    wss.emit("connection", ws, instanceWS);
-  });
-});
+      ws.onmessage = ({ data }) => {
+        dataParsed = JSON.parse(data as string);
+      };
 
-wss.on("connection", (ws: WebSocket, instanceWS: WebSocket) => {
-  let dataParsed = null;
+      instanceWS.onopen = () => instanceWS.send(JSON.stringify(dataParsed));
 
-  ws.onmessage = ({ data }) => {
-    dataParsed = JSON.parse(data);
-  };
+      instanceWS.onmessage = ({ data }) => {
+        if (ws.readyState === WebSocket.OPEN) {
+          ws.send(data);
+        }
+      };
 
-  instanceWS.onopen = () => instanceWS.send(JSON.stringify(dataParsed));
+      instanceWS.onclose = () => ws.close();
+    },
+  );
 
-  instanceWS.onmessage = ({ data }) => {
-    if (ws.readyState === WebSocket.OPEN) {
-      ws.send(data);
-    }
-  };
-
-  ws.onclose = () => instanceWS.close();
-  instanceWS.onclose = () => ws.close();
-});
-
-console.log("Gateway Proxy ready on /gateway");
+  console.log("Gateway Proxy ready on /gateway");
+};

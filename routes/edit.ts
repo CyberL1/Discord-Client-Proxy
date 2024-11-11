@@ -1,17 +1,22 @@
-import { Router } from "express";
+import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { getInstance } from "../utils.ts";
 
-const router = Router();
+interface Params {
+  name: string;
+}
 
-router.get("/:name", (req, res) => {
-  const instance = getInstance(req.params.name);
+export default (fastify: FastifyInstance) => {
+  fastify.get(
+    "/:name",
+    (req: FastifyRequest<{ Params: Params }>, reply: FastifyReply) => {
+      const instance = getInstance(req.params.name);
 
-  if (!instance) {
-    res.status(404).send("Instance not found");
-    return;
-  }
+      if (!instance) {
+        return reply.status(404).send("Instance not found");
+      }
 
-  res.render("edit", { instance, host: req.get("host") });
-});
-
-export default router;
+      // @ts-ignore
+      reply.view("edit", { instance, host: req.headers.host });
+    },
+  );
+};

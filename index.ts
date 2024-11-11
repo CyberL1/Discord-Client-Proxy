@@ -1,10 +1,12 @@
-import express from "express";
+import Fastify from "fastify";
+import FastifyView from "@fastify/view";
 import { readdirSync } from "fs";
+import ejs from "ejs";
+import FastifyWebsocket from "@fastify/websocket";
 
-const app = express();
+const fastify = Fastify({ logger: true });
 
-app.set("view engine", "ejs");
-app.use(express.json());
+fastify.register(FastifyView, { engine: { ejs }, root: "views" });
 
 process.env.PORT ??= "3000";
 
@@ -15,10 +17,20 @@ for (const route of routesDir) {
   const routePath = cleanRoute == "index" ? "/" : `/${cleanRoute}`;
 
   console.log(`Loading route: ${routePath}`);
-  app.use(routePath, (await import(`./routes/${route}`)).default);
+  fastify.register((await import(`./routes/${route}`)).default, {
+    prefix: routePath,
+  });
 }
 
-export const server = app.listen(process.env.PORT, () => {
+fastify.register(FastifyWebsocket);
+fastify.register((await import("./gateway/index.ts")).default);
+
+fastify.listen({ port: Number(process.env.PORT) }, async (err, address) => {
+  if (err) {
+    fastify.log.error(err);
+    process.exit(1);
+  }
+
   console.log(`App ready on port ${process.env.PORT}`);
-  import("./gateway/index.ts");
+  console.log(`App ready on ${address}`);
 });
