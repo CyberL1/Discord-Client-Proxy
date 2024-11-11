@@ -1,0 +1,83 @@
+<div class="instances">
+  Instances<br>
+
+  <% instances.map(instance => { %>
+    <div id="<%= instance.name %>">
+      <a href="http://<%= instance.name.toLowerCase() %>.<%= host %>/app"><%= instance.name %></a>
+      <button onclick="location.href = '/edit/<%= instance.name %>'">Edit</button>
+    </div>
+  <% }) %>
+</div><br>
+
+Add instance
+<form id="add">
+  <label for="name">Instance name</label>
+  <input name="name" required><br>
+  <label for="releaseChannel">Release channel</label>
+  <select name="releaseChannel" required>
+    <% ["Stable", "PTB", "Canary", "Staging"].map(key => { %>
+      <option value="<%= key.toLowerCase() %>"><%= key %></option>
+      <% }) %>
+  </select><br>
+  <% ["api", "gateway", "cdn", "media"].map(key => { %>
+    <label for="endpoints[<%= key %>]"><%= key.toUpperCase() %> endpoint</label>
+    <input name="endpoints[<%= key %>]"><br>
+    <% }) %><br>
+
+    Settings<br>
+    <% ["useHttps", "useApiProxy", "useGatewayProxy", "useCdnProxy"].map(key => { %>
+      <input type="checkbox" name="settings[<%= key %>]"><%= key %><br>
+      <% }) %>
+    <br>
+    <button type="submit">Add instance</button>
+</form>
+
+<script>
+  document.querySelector("form#add").addEventListener("submit", async e => {
+    e.preventDefault();
+
+    const formData = new FormData(e.target);
+    const data = Object.fromEntries(formData.entries());
+
+    const instance = {
+      name: data.name,
+      releaseChannel: data.releaseChannel,
+      endpoints: {
+        api: data["endpoints[api]"],
+        gateway: data["endpoints[gateway]"],
+        cdn: data["endpoints[cdn]"],
+        media: data["endpoints[media]"]
+      },
+      settings: {
+        useHttps: data["settings[useHttps]"] === "on",
+        useApiProxy: data["settings[useApiProxy]"] === "on",
+        useGatewayProxy: data["settings[useGatewayProxy]"] === "on",
+        useCdnProxy: data["settings[useCdnProxy]"] === "on"
+      }
+    };
+
+    const added = await fetch("/instances/add", { method: "POST", headers: { "content-type":"application/json" }, body: JSON.stringify(instance) });
+    const json = await added.json();
+
+    if (added.ok) {
+      const div = document.createElement("div");
+      div.id = json.name;
+
+      const link = document.createElement("a");
+
+      link.href = `http://${json.name}.${location.host}/app`;
+      link.innerText = json.name;
+
+      div.append(link);
+
+      const deleteButton = document.createElement("button");
+
+      deleteButton.innerText = "Edit";
+      deleteButton.onclick = () => location.href = `/edit/${json.name}`;
+
+      div.append(deleteButton);
+
+      document.querySelector("div.instances").append(div);
+    }
+  });
+</script>

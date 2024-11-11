@@ -1,53 +1,59 @@
-import { DOMAINS, ENDPOINTS } from "./contants.ts";
-import { Build, Commit, ReleaseChannel } from "./types.ts";
+import { existsSync, readFileSync, writeFileSync } from "fs";
+import type { Instance } from "./types.ts";
 
-export const getBuild = async (
-  channel: ReleaseChannel,
-  hash?: string,
-) => {
-  let build: { version_hash: string; html: string };
-  let commitHash;
+const checkForData = (): void => {
+  if (!existsSync("instances.json")) {
+    writeFileSync("instances.json", "[]");
+  }
+};
 
-  if (channel === ReleaseChannel.STAGING) channel = ReleaseChannel.CANARY;
+export const getInstances = (): Instance[] => {
+  checkForData();
 
-  try {
-    const headers = { headers: { "accept": "application/vnd.github+json" } };
-    const commitsUrl = `${ENDPOINTS.RELEASE_CHANNELS_COMMITS}/${channel}/web`;
+  const file = readFileSync("instances.json", { encoding: "utf-8" });
+  const parsed = JSON.parse(file);
 
-    const commits = await (await fetch(commitsUrl, headers)).json() as Commit[];
+  return parsed;
+};
 
-    if (!hash) commitHash = commits[0].sha;
-    else {
-      const commit = commits.find(({ commit }) =>
-        commit.message.includes(`${hash}`)
-      );
+export const getInstance = (name: string): Instance | undefined => {
+  const instances = getInstances();
 
-      commitHash = commit?.sha;
-    }
+  return instances.find((instance) => instance.name === name);
+};
 
-    const { content: info } = await (await fetch(
-      `${ENDPOINTS.RELEASE_CHANNELS}/${channel}/info.json?ref=${commitHash}`,
-    )).json();
+export const addInstance = (data: Instance): void => {
+  const instances = getInstances();
+  instances.push(data);
 
-    const { content: html } = await (await fetch(
-      `${ENDPOINTS.RELEASE_CHANNELS}/${channel}/web/scripts/index.html?ref=${commitHash}`,
-    )).json();
+  writeFileSync("instances.json", JSON.stringify(instances));
+};
 
-    build = {
-      version_hash: JSON.parse(atob(info)).version_hash,
-      html: atob(html),
-    };
-  } catch {
-    console.error(`Cannot connect to github, getting latest ${channel}`);
+export const editInstance = (name: string, data: Instance): boolean => {
+  const instances = getInstances();
 
-    const html = await (await fetch(`${DOMAINS[channel]}/app`)).text();
+  const instance = instances.find((instance) => instance.name === name);
 
-    const { hash } =
-      await (await fetch(`${DOMAINS[channel]}/assets/version.${channel}.json`))
-        .json();
-
-    build = { version_hash: hash, html };
+  if (!instance) {
+    return false;
   }
 
-  return build as Build;
+  instances[instances.indexOf(instance)] = data;
+  writeFileSync("instances.json", JSON.stringify(instances));
+
+  return true;
+};
+
+export const deleteInstance = (name: string): boolean => {
+  const instances = getInstances();
+  const instanceByName = instances.find((instance) => instance.name === name);
+
+  if (!instanceByName) {
+    return false;
+  }
+
+  instances.splice(instances.indexOf(instanceByName), 1);
+  writeFileSync("instances.json", JSON.stringify(instances));
+
+  return true;
 };
