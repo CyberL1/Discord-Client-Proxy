@@ -1,49 +1,29 @@
-export interface Build {
+export interface Instance {
   name: string;
-  version_hash: string;
-  GLOBAL_ENV?: GlobalEnv;
-  html: string;
+  releaseChannel: ReleaseChannel;
+  endpoints: InstanceEndpoints;
+  settings: InstanceSettings;
 }
 
-export interface GlobalEnv {
-  API_ENDPOINT: string;
-  API_VERSION: number;
-  GATEWAY_ENDPOINT: string;
-  WEBAPP_ENDPOINT: string;
-  CDN_HOST: string;
-  ASSET_ENDPOINT: string;
-  MEDIA_PROXY_ENDPOINT: string;
-  WIDGET_ENDPOINT: string;
-  INVITE_HOST: string;
-  GUILD_TEMPLATE_HOST: string;
-  GIFT_CODE_HOST: string;
-  RELEASE_CHANNEL: ReleaseChannel;
-  DEVELOPERS_ENDPOINT: string;
-  MARKETING_ENDPOINT: string;
-  BRAINTREE_KEY: string;
-  STRIPE_KEY: string;
-  ADYEN_KEY: string;
-  NETWORKING_ENDPOINT: string;
-  RTC_LATENCY_ENDPOINT: string;
-  ACTIVITY_APPLICATION_HOST: string;
-  PROJECT_ENV: string;
-  REMOTE_AUTH_ENDPOINT: string;
-  SENTRY_TAGS: { buildId: string; buildType: string };
-  MIGRATION_SOURCE_ORIGIN: string;
-  MIGRATION_DESTINATION_ORIGIN: string;
-  HTML_TIMESTAMP: string;
-  ALGOLIA_KEY: string;
-  PUBLIC_PATH: string;
+interface InstanceEndpoints {
+  api?: string;
+  gateway?: string;
+  cdn?: string;
+  media?: string;
 }
 
-export enum ReleaseChannel {
-  STABLE = "stable",
-  PTB = "ptb",
-  CANARY = "canary",
-  STAGING = "staging",
+interface InstanceSettings {
+  useHttps?: boolean;
+  useApiProxy?: boolean;
+  useGatewayProxy?: boolean;
+  useCdnProxy?: boolean;
 }
 
-export interface Commit {
-  sha: string;
-  commit: { message: string };
-}
+export type ReleaseChannel = "stable" | "ptb" | "canary" | "staging";
+
+export const Domains: { [K in ReleaseChannel]: string } = {
+  stable: "https://discord.com",
+  ptb: "https://ptb.discord.com",
+  canary: "https://canary.discord.com",
+  staging: "https://canary.discord.com", // We cannot access staging without authorization. Original domain: https://staging.discord.co
+};
