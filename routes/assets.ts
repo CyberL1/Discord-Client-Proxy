@@ -1,6 +1,7 @@
 import type { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
 import { getInstance } from "../utils.ts";
 import { Domains } from "../types.ts";
+import mime from "mime-types";
 
 export default (fastify: FastifyInstance) => {
   fastify.get("/*", async (req: FastifyRequest, reply: FastifyReply) => {
@@ -44,7 +45,7 @@ export default (fastify: FastifyInstance) => {
       );
     }
 
-    reply.type(extension);
+    reply.type(mime.lookup(extension).toString());
     reply.status(page.status);
 
     return content;
