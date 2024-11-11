@@ -1,2 +1,2 @@
-builds/builds.json
-builds/hashes.json
+node_modules
+instances.json

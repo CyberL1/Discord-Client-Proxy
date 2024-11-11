@@ -1,0 +1,68 @@
+<button onclick="location.href = '/'">Back</button> Editing <%= instance.name %><br><br>
+
+Edit instance
+<form id="edit">
+  <label for="name">Instance name</label>
+  <input name="name" value="<%= instance.name %>" required><br>
+  <label for="releaseChannel">Release channel</label>
+  <select name="releaseChannel" required>
+    <% ["Stable", "PTB", "Canary", "Staging"].map(key => { %>
+      <option value="<%= key.toLowerCase() %>" <% if (key.toLowerCase() === instance.releaseChannel) { %> selected <% } %>><%= key %></option>
+      <% }) %>
+  </select><br>
+  <% ["api", "gateway", "cdn", "media"].map(key => { %>
+    <label for="endpoints[<%= key %>]"><%= key.toUpperCase() %> endpoint</label>
+    <input name="endpoints[<%= key %>]" value="<%= instance.endpoints[key] %>"><br>
+    <% }) %><br>
+
+    Settings<br>
+    <% ["useHttps", "useApiProxy", "useGatewayProxy", "useCdnProxy"].map(key => { %>
+      <input type="checkbox" name="settings[<%= key %>]" <% if (instance.settings[key]) { %>checked<% } %>><%= key %><br>
+      <% }) %><br>
+
+    <button type="submit">Edit instance</button>
+    <button type="button" onclick="deleteInstance('<%= instance.name %>')">Delete instance</button>
+</form>
+
+<script>
+  document.querySelector("form#edit").addEventListener("submit", async e => {
+    e.preventDefault();
+
+    const formData = new FormData(e.target);
+    const data = Object.fromEntries(formData.entries());
+
+    const instance = {
+      name: data.name,
+      releaseChannel: data.releaseChannel,
+      endpoints: {
+        api: data["endpoints[api]"],
+        gateway: data["endpoints[gateway]"],
+        cdn: data["endpoints[cdn]"],
+        media: data["endpoints[media]"]
+      },
+      settings: {
+        useHttps: data["settings[useHttps]"] === "on",
+        useApiProxy: data["settings[useApiProxy]"] === "on",
+        useGatewayProxy: data["settings[useGatewayProxy]"] === "on",
+        useCdnProxy: data["settings[useCdnProxy]"] === "on"
+      }
+    };
+
+    const edited = await fetch(`/instances/edit/${location.pathname.split("/")[2]}`, { method: "POST", headers: { "content-type":"application/json" }, body: JSON.stringify(instance) });
+    const json = await edited.json();
+
+    if (edited.ok) {
+      location.href = `/edit/${json.name}`;
+    }
+  });
+
+  async function deleteInstance(name) {
+    if (confirm(`Are you sure you want to delete ${name}?`)) {
+      const deleted = await fetch(`/instances/${name}`, { method: "DELETE" });
+
+      if (deleted.ok) {
+        location.href = "/";
+      }
+    }
+  }
+</script>
