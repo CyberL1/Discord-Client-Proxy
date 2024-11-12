@@ -22,7 +22,7 @@ export default (fastify: FastifyInstance) => {
           .toString()
           .replace(
             '"https:"+window.GLOBAL_ENV.API_ENDPOINT',
-            '"http:"+window.GLOBAL_ENV.API_ENDPOINT',
+            `"${instance.settings.useHttps && !instance.settings.useApiProxy ? "https" : "http"}:"+window.GLOBAL_ENV.API_ENDPOINT`,
           ),
       );
 
