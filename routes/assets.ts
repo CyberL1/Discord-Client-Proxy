@@ -32,6 +32,15 @@ export default (fastify: FastifyInstance) => {
         content
           .toString()
           .replace(
+            /(window\.)?location\.protocol,"\/\/"/g,
+            `"${instance.settings.useHttps ? "https" : "http"}:","//"`,
+          ),
+      );
+
+      content = Buffer.from(
+        content
+          .toString()
+          .replace(
             'PRIMARY_DOMAIN="discord.com"',
             `PRIMARY_DOMAIN="${req.headers.host}"`,
           ),
