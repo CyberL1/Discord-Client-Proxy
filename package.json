@@ -13,6 +13,7 @@
   "dependencies": {
     "@fastify/view": "^10.0.1",
     "@fastify/websocket": "^11.0.1",
+    "@sapphire/snowflake": "^3.5.5",
     "ejs": "^3.1.10",
     "fastify": "^5.1.0",
     "mime-types": "^2.1.35",
@@ -21,6 +22,7 @@
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
     "@types/mime-types": "^2.1.4",
-    "@types/ws": "^8.5.13"
+    "@types/ws": "^8.5.13",
+    "discord-types": "^1.3.3"
   }
 }
