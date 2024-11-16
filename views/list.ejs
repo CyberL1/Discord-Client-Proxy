@@ -25,7 +25,7 @@ Add instance
     <% }) %><br>
 
     Settings<br>
-    <% ["useHttps", "useApiProxy", "useGatewayProxy", "useCdnProxy"].map(key => { %>
+    <% ["useHttps", "useApiProxy", "useGatewayProxy", "useCdnProxy", "customBuiltInCommands"].map(key => { %>
       <input type="checkbox" name="settings[<%= key %>]"><%= key %><br>
       <% }) %>
     <br>
@@ -52,7 +52,8 @@ Add instance
         useHttps: data["settings[useHttps]"] === "on",
         useApiProxy: data["settings[useApiProxy]"] === "on",
         useGatewayProxy: data["settings[useGatewayProxy]"] === "on",
-        useCdnProxy: data["settings[useCdnProxy]"] === "on"
+        useCdnProxy: data["settings[useCdnProxy]"] === "on",
+        customBuiltInCommands: data["settings[customBuiltInCommands]"] === "on"
       }
     };
 

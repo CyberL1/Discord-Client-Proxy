@@ -46,6 +46,7 @@ export default (fastify: FastifyInstance) => {
             useApiProxy: { type: "boolean" },
             useGatewayProxy: { type: "boolean" },
             useCdnProxy: { type: "boolean" },
+            customBuiltInCommands: { type: "boolean" },
           },
         },
         additionalProperties: false,
