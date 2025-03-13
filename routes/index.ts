@@ -23,37 +23,37 @@ export default (fastify: FastifyInstance) => {
     let content = await page.text();
 
     content = content.replace(
-      /API_ENDPOINT: '\/\/((ptb|canary).)?discord.com\/api'/,
-      `API_ENDPOINT: '${instance.settings.useApiProxy ? `//${host}/api` : (instance.endpoints.api ?? Domains[instance.releaseChannel].slice(6) + "/api")}'`,
+      /"API_ENDPOINT":"\/\/((ptb|canary).)?discord.com\/api"/,
+      `"API_ENDPOINT":'${instance.settings.useApiProxy ? `//${host}/api` : (instance.endpoints.api ?? Domains[instance.releaseChannel].slice(6) + "/api")}'`,
     );
 
     content = content.replace(
-      "GATEWAY_ENDPOINT: 'wss://gateway.discord.gg'",
-      `GATEWAY_ENDPOINT: '${instance.settings.useGatewayProxy ? `ws://${host}/gateway` : (instance.endpoints.gateway ?? "wss://gateway.discord.gg")}'`,
+      '"GATEWAY_ENDPOINT":"wss://gateway.discord.gg"',
+      `"GATEWAY_ENDPOINT":'${instance.settings.useGatewayProxy ? `ws://${host}/gateway` : (instance.endpoints.gateway ?? "wss://gateway.discord.gg")}'`,
     );
 
     content = content.replace(
-      "CDN_HOST: 'cdn.discordapp.com'",
-      `CDN_HOST: '${instance.settings.useCdnProxy ? `${host}/cdn` : (instance.endpoints.cdn ?? "cdn.discordapp.com")}'`,
+      '"CDN_HOST":"cdn.discordapp.com"',
+      `"CDN_HOST":'${instance.settings.useCdnProxy ? `${host}/cdn` : (instance.endpoints.cdn ?? "cdn.discordapp.com")}'`,
     );
 
     if (instance.endpoints.media) {
       content = content.replace(
-        "MEDIA_PROXY_ENDPOINT: '//media.discordapp.net'",
-        `MEDIA_PROXY_ENDPOINT: '${instance.endpoints.media}'`,
+        '"MEDIA_PROXY_ENDPOINT":"//media.discordapp.net"',
+        `"MEDIA_PROXY_ENDPOINT":'${instance.endpoints.media}'`,
       );
     }
 
     if (instance.releaseChannel === "staging") {
       content = content.replace(
-        "RELEASE_CHANNEL: 'canary'",
-        "RELEASE_CHANNEL: 'staging'",
+        '"RELEASE_CHANNEL":"canary"',
+        '"RELEASE_CHANNEL":"staging"',
       );
     }
 
     content = content.replace(
-      /WEBAPP_ENDPOINT: '\/\/((ptb|canary).)?discord.com\'/,
-      `WEBAPP_ENDPOINT: '//${host}'`,
+      /"WEBAPP_ENDPOINT":"\/\/((ptb|canary).)?discord.com\"/,
+      `"WEBAPP_ENDPOINT":"//${host}"`,
     );
 
     content = content.replaceAll(/integrity="[^"]+"/g, "");
