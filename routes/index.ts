@@ -56,6 +56,17 @@ export default (fastify: FastifyInstance) => {
       `"WEBAPP_ENDPOINT":"//${host}"`,
     );
 
+    // Discord developers portal has a sligthly diffenent GLOBAL_ENV format
+    content = content.replace(
+      /API_ENDPOINT: '\/\/((ptb|canary).)?discord.com\/api'/,
+      `API_ENDPOINT: '${instance.settings.useApiProxy ? `//${host}/api` : (instance.endpoints.api ?? Domains[instance.releaseChannel].slice(6) + "/api")}'`,
+    );
+
+    content = content.replace(
+      /WEBAPP_ENDPOINT: '\/\/((ptb|canary).)?discord.com\'/,
+      `WEBAPP_ENDPOINT: '//${host}'`,
+    );
+
     content = content.replaceAll(/integrity="[^"]+"/g, "");
 
     return reply.type("html").send(content);
