@@ -25,12 +25,11 @@ for (const route of routesDir) {
 fastify.register(FastifyWebsocket);
 fastify.register((await import("./gateway/index.ts")).default);
 
-fastify.listen({ port: Number(process.env.PORT) }, async (err, address) => {
+fastify.listen({ port: Number(process.env.PORT) }, async (err) => {
   if (err) {
     fastify.log.error(err);
     process.exit(1);
   }
 
-  console.log(`App ready on port ${process.env.PORT}`);
-  console.log(`App ready on ${address}`);
+  console.log(`App ready on port ${process.env.PORT} and can be accessed on http://localhost:${process.env.PORT}`);
 });
