@@ -28,6 +28,16 @@ export default (fastify: FastifyInstance) => {
           ),
       );
 
+      // Voice URL fix
+      content = Buffer.from(
+        content
+          .toString()
+          .replace(
+            'let e_=/^https/.test("https:")?"wss:":"ws:"',
+            `let e_="${instance.settings.useHttps ? "wss:" : "ws:"}"`,
+          ),
+      );
+
       content = Buffer.from(
         content
           .toString()
