@@ -17,7 +17,6 @@ interface InstanceSettings {
   useApiProxy?: boolean;
   useGatewayProxy?: boolean;
   useCdnProxy?: boolean;
-  customBuiltInCommands?: boolean;
 }
 
 export type ReleaseChannel = "stable" | "ptb" | "canary" | "staging";
