@@ -4,7 +4,7 @@ import { readdirSync } from "fs";
 import ejs from "ejs";
 import FastifyWebsocket from "@fastify/websocket";
 
-const fastify = Fastify({ logger: true });
+const fastify = Fastify({ logger: false });
 
 fastify.register(FastifyView, { engine: { ejs }, root: "views" });
 
@@ -31,5 +31,7 @@ fastify.listen({ port: Number(process.env.PORT) }, async (err) => {
     process.exit(1);
   }
 
-  console.log(`App ready on port ${process.env.PORT} and can be accessed on http://localhost:${process.env.PORT}`);
+  console.log(
+    `App ready on port ${process.env.PORT} and can be accessed on http://localhost:${process.env.PORT}`,
+  );
 });
