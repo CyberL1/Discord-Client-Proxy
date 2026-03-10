@@ -27,3 +27,12 @@ export const Domains: { [K in ReleaseChannel]: string } = {
   canary: "https://canary.discord.com",
   staging: "https://canary.discord.com", // We cannot access staging without authorization. Original domain: https://staging.discord.co
 };
+
+export interface Patch {
+  name: string;
+  description?: string;
+  code: (
+    content: Buffer<ArrayBuffer>,
+    optionalThings: { instance: Instance; host?: string },
+  ) => Buffer<ArrayBuffer>;
+}

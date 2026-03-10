@@ -57,3 +57,25 @@ export const deleteInstance = (name: string): boolean => {
 
   return true;
 };
+
+export const applyPatch = async (
+  path: string,
+  content: Buffer<ArrayBuffer>,
+  optionalThings: { instance: Instance; host?: string },
+) => {
+  const { default: patch } = await import(path);
+
+  if (!("name" in patch)) {
+    throw new Error("Patch is missing a name");
+  }
+
+  if (!("description" in patch)) {
+    throw new Error("Patch is missing a description");
+  }
+
+  if (!("code" in patch)) {
+    throw new Error("Patch is missing code");
+  }
+
+  return patch.code(content, optionalThings);
+};

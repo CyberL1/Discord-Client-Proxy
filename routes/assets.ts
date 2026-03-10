@@ -1,7 +1,8 @@
 import type { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
-import { getInstance } from "../utils.ts";
+import { applyPatch, getInstance } from "../utils.ts";
 import { Domains } from "../types.ts";
 import mime from "mime-types";
+import { readdirSync } from "fs";
 
 export default (fastify: FastifyInstance) => {
   fastify.get("/*", async (req: FastifyRequest, reply: FastifyReply) => {
@@ -10,58 +11,17 @@ export default (fastify: FastifyInstance) => {
     const page = await fetch(`${Domains[instance.releaseChannel]}${req.url}`);
 
     let content = Buffer.from(await page.arrayBuffer());
-    let extension = req.url.split(".").pop() as string;
+    const extension = req.url.split(".").pop() as string;
 
-    if (extension === "map") {
-      extension = "js.map";
-    }
+    if (req.url.startsWith("/assets/web.") && extension === "js") {
+      const patchFiles = readdirSync("patches");
 
-    if (["js", "js.map"].includes(extension)) {
-      content = Buffer.from(
-        content
-          .toString()
-          .replace(
-            '"https:"+window.GLOBAL_ENV.API_ENDPOINT',
-            `"${instance.settings.useHttps && !instance.settings.useApiProxy ? "https" : "http"}:"+window.GLOBAL_ENV.API_ENDPOINT`,
-          ),
-      );
-
-      // Voice URL fix
-      content = Buffer.from(
-        content
-          .toString()
-          .replace(
-            'let e_=/^https/.test("https:")?"wss:":"ws:"',
-            `let e_="${instance.settings.useHttps ? "wss:" : "ws:"}"`,
-          ),
-      );
-
-      content = Buffer.from(
-        content
-          .toString()
-          .replace(
-            /(window\.)?location\.protocol,"\/\/"/g,
-            `"${instance.settings.useHttps ? "https" : "http"}:","//"`,
-          ),
-      );
-
-      content = Buffer.from(
-        content
-          .toString()
-          .replace(
-            'PRIMARY_DOMAIN="discord.com"',
-            `PRIMARY_DOMAIN="${req.headers.host}"`,
-          ),
-      );
-
-      content = Buffer.from(
-        content
-          .toString()
-          .replace(
-            "e.resume_gateway_url",
-            `"${instance.settings.useGatewayProxy ? `ws://${req.headers.host}/gateway` : (instance.endpoints.gateway ?? "wss://gateway.discord.gg")}"`,
-          ),
-      );
+      for (const patchFile of patchFiles) {
+        content = await applyPatch(`./patches/${patchFile}`, content, {
+          instance,
+          host: req.headers.host,
+        });
+      }
     }
 
     reply.type(mime.lookup(extension).toString());
