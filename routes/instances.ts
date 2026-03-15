@@ -4,13 +4,13 @@ import type {
   FastifyRequest,
   FastifySchema,
 } from "fastify";
+import type { Instance } from "../types.ts";
 import {
   addInstance,
   deleteInstance,
   editInstance,
   getInstances,
 } from "../utils.ts";
-import type { Instance } from "../types.ts";
 
 interface Params {
   name: string;
