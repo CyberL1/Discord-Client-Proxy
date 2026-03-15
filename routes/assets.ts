@@ -1,8 +1,8 @@
-import type { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
-import { applyPatch, getInstance } from "../utils.ts";
-import { Domains } from "../types.ts";
-import mime from "mime-types";
+import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { readdirSync } from "fs";
+import mime from "mime-types";
+import { Domains } from "../types.ts";
+import { applyPatch, getInstance } from "../utils.ts";
 
 export default (fastify: FastifyInstance) => {
   fastify.get("/*", async (req: FastifyRequest, reply: FastifyReply) => {

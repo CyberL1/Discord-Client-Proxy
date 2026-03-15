@@ -1,6 +1,6 @@
-import type { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
-import { getInstance } from "../utils.ts";
+import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { Domains } from "../types.ts";
+import { getInstance } from "../utils.ts";
 
 export default (fastify: FastifyInstance) => {
   fastify.all("/*", async (req: FastifyRequest, reply: FastifyReply) => {
