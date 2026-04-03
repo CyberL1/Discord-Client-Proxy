@@ -1,8 +1,8 @@
-import Fastify from "fastify";
 import FastifyView from "@fastify/view";
-import { readdirSync } from "fs";
-import ejs from "ejs";
 import FastifyWebsocket from "@fastify/websocket";
+import ejs from "ejs";
+import Fastify from "fastify";
+import { readdirSync } from "fs";
 
 const fastify = Fastify({ logger: false });
 
