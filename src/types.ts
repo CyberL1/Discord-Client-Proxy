@@ -1,6 +1,11 @@
+import type { HTTPMethods, RouteHandler, RouteOptions } from "fastify";
+
+export type MethodRoutes = {
+  [method in HTTPMethods]?: Omit<RouteOptions, "method" | "url"> | RouteHandler;
+};
+
 export interface Instance {
   name: string;
-  releaseChannel: ReleaseChannel;
   endpoints: InstanceEndpoints;
   settings: InstanceSettings;
 }
@@ -12,11 +17,9 @@ interface InstanceEndpoints {
   media?: string;
 }
 
-interface InstanceSettings {
+export interface InstanceSettings {
+  releaseChannel: ReleaseChannel;
   useHttps?: boolean;
-  useApiProxy?: boolean;
-  useGatewayProxy?: boolean;
-  useCdnProxy?: boolean;
 }
 
 export type ReleaseChannel = "stable" | "ptb" | "canary" | "staging";
@@ -25,14 +28,14 @@ export const Domains: { [K in ReleaseChannel]: string } = {
   stable: "https://discord.com",
   ptb: "https://ptb.discord.com",
   canary: "https://canary.discord.com",
-  staging: "https://canary.discord.com", // We cannot access staging without authorization. Original domain: https://staging.discord.co
+  staging: "https://canary.discord.com", // Staging cannot be accessed without authorization. Original domain: https://staging.discord.co
 };
 
 export interface Patch {
   name: string;
-  description?: string;
+  description: string;
   code: (
     content: Buffer<ArrayBuffer>,
-    optionalThings: { instance: Instance; host?: string },
+    instance: Instance,
   ) => Buffer<ArrayBuffer>;
 }
