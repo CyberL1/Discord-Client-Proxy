@@ -53,9 +53,34 @@ app.setNotFoundHandler(async (req, reply) => {
     },
   );
 
-  for (const [header, value] of page.headers) {
+  for (let [header, value] of page.headers) {
     if (header === "content-encoding") {
       continue;
+    }
+
+    if (header === "content-security-policy") {
+      value = value
+        .replace(
+          "https://discord.com",
+          `${instance.settings.useHttps ? "https" : "http"}:${instance.endpoints.api}`,
+        )
+        .replace(
+          "https://cdn.discordapp.com",
+          `${instance.settings.useHttps ? "https" : "http"}://${instance.endpoints.cdn}`,
+        )
+        .replace(
+          "https://media.discordapp.net",
+          `${instance.settings.useHttps ? "https" : "http"}:${instance.endpoints.media}`,
+        )
+        .replace(
+          "https://*.discordapp.com",
+          `${instance.settings.useHttps ? "https" : "http"}://${instance.endpoints.cdn}`,
+        )
+        .replace(
+          "https://*.discordapp.net",
+          `${instance.settings.useHttps ? "https" : "http"}:${instance.endpoints.media}`,
+        )
+        .replace("wss://*.discord.gg", instance.endpoints.gateway);
     }
 
     reply.header(header, value);
