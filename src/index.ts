@@ -1,4 +1,5 @@
 import { readdirSync } from "node:fs";
+import { join } from "node:path";
 import fastify from "fastify";
 import { Domains } from "./types.ts";
 import { getInstance } from "./utils.ts";
@@ -60,8 +61,27 @@ app.setNotFoundHandler(async (req, reply) => {
     reply.header(header, value);
   }
 
+  let content = Buffer.from(await page.arrayBuffer());
+
+  const patchesDir = readdirSync(
+    join(
+      import.meta.dirname,
+      "patches",
+      req.url.endsWith(".js") ? "js" : "html",
+    ),
+    { withFileTypes: true },
+  );
+
+  for (const file of patchesDir) {
+    if (file.isDirectory()) {
+      continue;
+    }
+    const { default: patch } = await import(`${file.parentPath}/${file.name}`);
+    content = patch.code(content, instance);
+  }
+
   reply.code(page.status);
-  return reply.send(page.body);
+  return reply.send(content);
 });
 
 await app.listen({ port: Number(process.env.PORT) });
