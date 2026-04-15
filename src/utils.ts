@@ -50,6 +50,23 @@ export const addInstance = (instance: Instance): Instance => {
   return instance;
 };
 
+export const editInstance = (name: string, instance: Instance): Instance => {
+  const instances = getInstances();
+
+  const instanceToEdit = instances.find(
+    (instance) => normalizeName(name) === normalizeName(instance.name),
+  );
+
+  if (!instanceToEdit) {
+    throw new Error("Instance does not exist");
+  }
+
+  instances[instances.indexOf(instanceToEdit)] = instance;
+  writeFileSync(instancesFilePath, JSON.stringify(instances));
+
+  return instanceToEdit;
+};
+
 export const instanceBodySchema = {
   body: {
     type: "object",

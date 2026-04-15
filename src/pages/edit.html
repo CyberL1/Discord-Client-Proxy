@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+
+<button onclick="window.location = '/'">Back</button> Editing <span id="instance-name"></span><br><br>
+
+<form>
+  <label for="name">Instance name</label>
+  <input name="name" required><br><br>
+  <div id="endpoints">
+    Endpoints<br>
+    <label for="api">API</label>
+    <input name="api" required><br>
+    <label for="gateway">Gateway</label>
+    <input name="gateway" required><br>
+    <label for="cdn">CDN</label>
+    <input name="cdn" required><br>
+    <label for="media">Media</label>
+    <input name="media" required>
+  </div><br>
+  <div id="settings">
+    Settings<br>
+    <label for="releaseChannel">Release channel</label>
+    <select name="releaseChannel" required>
+      <option value="stable">Stable</option>
+      <option value="ptb">PTB</option>
+      <option value="canary">Canary</option>
+      <option value="staging">Staging</option>
+    </select><br>
+    <label for="useHttps">Use HTTPS</label>
+    <input type="checkbox" name="useHttps">
+  </div><br>
+  <button>Edit instance</button>
+</form>
+
+<script type="module">
+  const normalizeName = (name) => name.toLowerCase().replaceAll(" ", "-");
+
+  const instanceReq = await fetch(`/instances/${location.pathname.split("/")[2]}`);
+  const instance = await instanceReq.json();
+
+  document.querySelector("span#instance-name").textContent = instance.name;
+
+  const form = document.querySelector("form");
+
+  form.querySelector("input[name=name]").value = instance.name;
+
+  const endpointInputElements = form.querySelector("div#endpoints").querySelectorAll("input[name]");
+  const settingsElements = form.querySelector("div#settings").querySelectorAll("[name]");
+
+  endpointInputElements.forEach(element => {
+    element.value = instance.endpoints[element.name];
+  });
+
+  settingsElements.forEach(element => {
+    element[element.type === "checkbox" ? "checked" : "value"] = instance.settings[element.name];
+  });
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const data = Object.fromEntries(new FormData(event.target));
+
+    const instance = {
+      name: data.name,
+      endpoints: {},
+      settings: {}
+    };
+
+    endpointInputElements.forEach(element => instance.endpoints[element.name] = element.value);
+    settingsElements.forEach(element => instance.settings[element.name] = element[element.type === "checkbox" ? "checked" : "value"]);
+
+    const edited = await fetch(`/instances/${location.pathname.split("/")[2]}`, { method: "POST", body: JSON.stringify(instance), headers: { "content-type": "application/json" } });
+
+    if (edited.ok) {
+      location.href = `/edit/${normalizeName(await (await edited.json()).name)}`;
+    }
+  });
+</script>
