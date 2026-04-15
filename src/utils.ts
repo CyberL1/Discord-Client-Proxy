@@ -23,8 +23,7 @@ export const getInstance = (name: string): Instance => {
   const instances = getInstances();
 
   const instance = instances.find(
-    (instance) =>
-      normalizeName(instance.name) === normalizeName(name.toLowerCase()),
+    (instance) => normalizeName(instance.name) === normalizeName(name),
   );
 
   if (!instance) {
