@@ -53,7 +53,12 @@ Add instance
     a.href = `//${normalizeName(instance.name)}.${location.host}/app`;
     a.textContent = instance.name;
 
-    div.append(a);
+    const button = document.createElement("button");
+
+    button.onclick = () => location.href = `/edit/${normalizeName(instance.name)}`;
+    button.textContent = "Edit";
+
+    div.append(a, button);
     instancesDiv.append(div);
   });
 
