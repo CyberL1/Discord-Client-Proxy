@@ -1,9 +1,9 @@
-import type { Patch } from "../types";
+import type { Patch } from "#src/types.ts";
 
 export default {
   name: "Voice url fix",
   description: "Fixes voice urls, allowing voice to work on plain http",
-  code: (content, { instance }) => {
+  code: (content, instance) => {
     return Buffer.from(
       content
         .toString()
