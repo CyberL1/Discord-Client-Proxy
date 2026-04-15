@@ -8,8 +8,8 @@ export default {
       content
         .toString()
         .replace(
-          /(window\.)?location\.protocol,"\/\/"/g,
-          `"${instance.settings.useHttps ? "https" : "http"}:","//"`,
+          /(window\.)?location\.protocol/g,
+          `"${instance.settings.useHttps ? "https" : "http"}:"`,
         ),
     );
   },
