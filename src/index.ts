@@ -88,21 +88,30 @@ app.setNotFoundHandler(async (req, reply) => {
 
   let content = Buffer.from(await page.arrayBuffer());
 
-  const patchesDir = readdirSync(
-    join(
-      import.meta.dirname,
-      "patches",
-      req.url.endsWith(".js") ? "js" : "html",
-    ),
-    { withFileTypes: true },
-  );
+  if (
+    page.headers.get("content-type") === "text/html" ||
+    page.headers.get("content-type") === "text/javascript"
+  ) {
+    const patchesDir = readdirSync(
+      join(
+        import.meta.dirname,
+        "patches",
+        req.url.endsWith(".js") ? "js" : "html",
+      ),
+      { withFileTypes: true },
+    );
 
-  for (const file of patchesDir) {
-    if (file.isDirectory()) {
-      continue;
+    for (const file of patchesDir) {
+      if (file.isDirectory()) {
+        continue;
+      }
+
+      const { default: patch } = await import(
+        `${file.parentPath}/${file.name}`
+      );
+
+      content = patch.code(content, instance);
     }
-    const { default: patch } = await import(`${file.parentPath}/${file.name}`);
-    content = patch.code(content, instance);
   }
 
   reply.code(page.status);
