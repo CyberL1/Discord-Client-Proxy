@@ -1,6 +1,11 @@
 import type { FastifyRequest } from "fastify";
 import type { Instance, MethodRoutes } from "#src/types.ts";
-import { editInstance, getInstance, instanceBodySchema } from "#src/utils.ts";
+import {
+  editInstance,
+  getInstance,
+  instanceBodySchema,
+  removeInstance,
+} from "#src/utils.ts";
 
 export default {
   GET: (req: FastifyRequest<{ Params: { name: string } }>) => {
@@ -22,5 +27,8 @@ export default {
 
       return editInstance(req.params.name, instance);
     },
+  },
+  DELETE: (req: FastifyRequest<{ Params: { name: string } }>) => {
+    return removeInstance(req.params.name);
   },
 } satisfies MethodRoutes;

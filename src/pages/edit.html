@@ -29,6 +29,7 @@
     <input type="checkbox" name="useHttps">
   </div><br>
   <button>Edit instance</button>
+  <button type="button">Delete instance</button>
 </form>
 
 <script type="module">
@@ -72,6 +73,14 @@
 
     if (edited.ok) {
       location.href = `/edit/${normalizeName(await (await edited.json()).name)}`;
+    }
+  });
+
+  form.querySelector("button[type=button]").addEventListener("click", async (event) => {
+    const deleted = await fetch(`/instances/${location.pathname.split("/")[2]}`, { method: "DELETE" });
+
+    if (deleted.ok) {
+      location.href = "/";
     }
   });
 </script>
