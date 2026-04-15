@@ -1,6 +1,36 @@
 <div class="instances">
   Instances
-</div>
+</div><br>
+
+Add instance
+<form>
+  <label for="name">Instance name</label>
+  <input name="name" required><br><br>
+  <div id="endpoints">
+    Endpoints<br>
+    <label for="api">API</label>
+    <input name="api" required><br>
+    <label for="gateway">Gateway</label>
+    <input name="gateway" required><br>
+    <label for="cdn">CDN</label>
+    <input name="cdn" required><br>
+    <label for="media">Media</label>
+    <input name="media" required>
+  </div><br>
+  <div id="settings">
+    Settings<br>
+    <label for="releaseChannel">Release channel</label>
+    <select name="releaseChannel" required>
+      <option value="stable">Stable</option>
+      <option value="ptb">PTB</option>
+      <option value="canary">Canary</option>
+      <option value="staging">Staging</option>
+    </select><br>
+    <label for="useHttps">Use HTTPS</label>
+    <input type="checkbox" name="useHttps">
+  </div><br>
+  <button>Add instance</button>
+</form>
 
 <script type="module">
   const normalizeName = (name) => name.toLowerCase().replaceAll(" ", "-");
@@ -9,6 +39,10 @@
   const instances = await instancesReq.json();
 
   const instancesDiv = document.querySelector("div.instances");
+  const form = document.querySelector("form");
+
+  const endpointsDiv = form.querySelector("div#endpoints");
+  const settingsDiv = form.querySelector("div#settings");
 
   instances.map(instance => {
     const div = document.createElement("div");
@@ -20,5 +54,44 @@
 
     div.append(a);
     instancesDiv.append(div);
+  });
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const data = Object.fromEntries(new FormData(event.target));
+
+    const instance = {
+      name: data.name,
+      endpoints: {},
+      settings: {}
+    };
+
+    endpointsDiv.querySelectorAll("input[name]").forEach(element => instance.endpoints[element.name] = element.value);
+    settingsDiv.querySelectorAll("[name]").forEach(element => instance.settings[element.name] = element[element.type === "checkbox" ? "checked" : "value"]);
+
+    const added = await fetch("/instances", { method: "POST", body: JSON.stringify(instance), headers: { "content-type": "application/json" } });
+
+    if (added.ok) {
+      const json = await added.json();
+
+      const div = document.createElement("div");
+      div.id = json.name;
+
+      const a = document.createElement("a");
+
+      a.href = `//${normalizeName(json.name)}.${location.host}/app`;
+      a.innerText = json.name;
+
+      div.append(a);
+
+      const button = document.createElement("button");
+
+      button.onclick = () => location.href = `/edit/${normalizeName(json.name)}`;
+      button.textContent = "Edit";
+
+      div.append(button);
+      document.querySelector("div.instances").append(div);
+    }
   });
 </script>
