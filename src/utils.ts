@@ -67,6 +67,23 @@ export const editInstance = (name: string, instance: Instance): Instance => {
   return instanceToEdit;
 };
 
+export const removeInstance = (name: string): Instance[] => {
+  const instances = getInstances();
+
+  const instanceToRemove = instances.find(
+    (instance) => normalizeName(name) === normalizeName(instance.name),
+  );
+
+  if (!instanceToRemove) {
+    throw new Error("Instance does not exist");
+  }
+
+  instances.splice(instances.indexOf(instanceToRemove));
+  writeFileSync(instancesFilePath, JSON.stringify(instances));
+
+  return instances;
+};
+
 export const instanceBodySchema = {
   body: {
     type: "object",
