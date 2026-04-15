@@ -1,6 +1,6 @@
-<div class="instances">
-  Instances
-</div><br>
+<!DOCTYPE html>
+
+<div class="instances">Instances</div><br>
 
 Add instance
 <form>
@@ -49,6 +49,7 @@ Add instance
     div.id = normalizeName(instance.name);
 
     const a = document.createElement("a");
+
     a.href = `//${normalizeName(instance.name)}.${location.host}/app`;
     a.textContent = instance.name;
 
