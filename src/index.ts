@@ -53,6 +53,10 @@ app.setNotFoundHandler(async (req, reply) => {
   );
 
   for (const [header, value] of page.headers) {
+    if (header === "content-encoding") {
+      continue;
+    }
+
     reply.header(header, value);
   }
 
