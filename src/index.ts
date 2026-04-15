@@ -62,7 +62,7 @@ app.setNotFoundHandler(async (req, reply) => {
       value = value
         .replace(
           "https://discord.com",
-          `${instance.settings.useHttps ? "https" : "http"}:${instance.endpoints.api}`,
+          `${instance.settings.useHttps ? "https" : "http"}://${new URL(`http:${instance.endpoints.api}`).host}`,
         )
         .replace(
           "https://cdn.discordapp.com",
