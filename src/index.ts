@@ -80,7 +80,10 @@ app.setNotFoundHandler(async (req, reply) => {
           "https://*.discordapp.net",
           `${instance.settings.useHttps ? "https" : "http"}:${instance.endpoints.media}`,
         )
-        .replace("wss://*.discord.gg", instance.endpoints.gateway);
+        .replace(
+          "wss://*.discord.gg",
+          `${instance.endpoints.gateway} ${instance.endpoints.remoteAuth}`,
+        );
     }
 
     reply.header(header, value);
