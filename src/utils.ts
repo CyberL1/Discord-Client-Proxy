@@ -96,6 +96,7 @@ export const instanceBodySchema = {
           gateway: { type: "string", minLength: 1 },
           cdn: { type: "string", minLength: 1 },
           media: { type: "string", minLength: 1 },
+          remoteAuth: { type: "string", minLength: 1 },
         },
         additionalProperties: false,
       },

@@ -15,6 +15,7 @@ interface InstanceEndpoints {
   gateway?: string;
   cdn?: string;
   media?: string;
+  remoteAuth?: string;
 }
 
 export interface InstanceSettings {
