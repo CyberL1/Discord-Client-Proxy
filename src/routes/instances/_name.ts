@@ -19,10 +19,7 @@ export default {
       const instance: Instance = {
         name: req.body.name.trim(),
         endpoints: req.body.endpoints,
-        settings: {
-          releaseChannel: req.body.settings.releaseChannel,
-          useHttps: req.body.settings.useHttps,
-        },
+        settings: req.body.settings,
       };
 
       return editInstance(req.params.name, instance);
