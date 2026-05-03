@@ -110,7 +110,7 @@ app.setNotFoundHandler(async (req, reply) => {
       }
 
       const { default: patch } = await import(
-        `${file.parentPath}/${file.name}`
+        `file:${file.parentPath}/${file.name}`
       );
 
       content = patch.code(content, instance);
