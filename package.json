@@ -20,8 +20,8 @@
     "fastify": "^5.8.5"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.4.12",
-    "@types/node": "^25.6.0"
+    "@biomejs/biome": "^2.4.16",
+    "@types/node": "^25.9.1"
   },
   "imports": {
     "#src/*": "./src/*"
