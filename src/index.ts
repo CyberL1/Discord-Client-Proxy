@@ -33,6 +33,12 @@ const registerRoutes = async (directory: string) => {
       app.route({
         url: routePath,
         ...route[method],
+        preHandler: (req, reply, next) => {
+          if (req.hostname != "localhost") {
+            reply.callNotFound();
+          }
+          next();
+        },
         handler: route[method].handler ?? route[method],
         method,
       });
